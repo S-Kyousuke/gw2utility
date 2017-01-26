@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import th.skyousuke.gw2utility.util.Gw2Api;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
@@ -40,7 +41,7 @@ public class TransactionListing {
         this.transaction = new SimpleObjectProperty<>(transaction);
 
         executor.scheduleAtFixedRate(() -> ageInSeconds.set(getTransaction().getDateCreated()
-                .until(LocalDateTime.now(), ChronoUnit.SECONDS)), 0, 1, TimeUnit.SECONDS);
+                .until(LocalDateTime.now(Clock.systemUTC()), ChronoUnit.SECONDS)), 0, 1, TimeUnit.SECONDS);
     }
 
     public void updateSellPrice() {
