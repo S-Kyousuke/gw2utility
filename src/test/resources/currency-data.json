@@ -1,0 +1,10 @@
+{
+  "1": {
+    "name": "Currency Name 1",
+    "iconPath": "Icon Path 1"
+  },
+  "2": {
+    "name": "Currency Name 2",
+    "iconPath": "Icon Path 2"
+  }
+}

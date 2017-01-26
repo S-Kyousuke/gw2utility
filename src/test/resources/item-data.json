@@ -1,0 +1,17 @@
+{
+  "0": {
+    "name": "Item Name 0",
+    "rarity": "Basic",
+    "iconPath": "Icon Path 0"
+  },
+  "1": {
+    "name": "Item Name 1",
+    "rarity": "Rare",
+    "iconPath": "Icon Path 1"
+  },
+  "2": {
+    "name": "Item Name 2",
+    "rarity": "Exotic",
+    "iconPath": "Icon Path 2"
+  }
+}

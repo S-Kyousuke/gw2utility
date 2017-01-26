@@ -1,0 +1,10 @@
+{
+  "0": {
+    "name": "Item Name 2",
+    "rarity": "Rare"
+  },
+  "1": {
+    "name": "Item Name 1",
+    "iconPath": "Icon Path 1"
+  }
+}

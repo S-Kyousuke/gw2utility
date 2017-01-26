@@ -1,0 +1,43 @@
+.menu-bar {
+    -fx-padding: 0px;
+}
+
+.menu-item{
+    -fx-padding: 5px 5px 5px 10px;
+}
+
+.context-menu {
+    -fx-padding: 0px;
+}
+
+.text-field, .text-field:focused {
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+.table-view {
+    -fx-control-inner-background: black;
+}
+
+.table-row-cell{
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Selected row */
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #101010;
+}
+
+.table-row-cell:filled:focused:selected {
+    -fx-background-color: #101010;
+    -fx-background: -fx-accent;
+}
+
+/* Row hovered */
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: #202020;
+}
+
+/* Selected row hovered when table focused */
+.table-view:row-selection .table-row-cell:filled:focused:hover {
+    -fx-background-color: #202020;
+}

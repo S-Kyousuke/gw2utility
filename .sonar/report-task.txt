@@ -1,0 +1,5 @@
+projectKey=gw2-income
+serverUrl=http://localhost:9000
+dashboardUrl=http://localhost:9000/dashboard/index/gw2-income
+ceTaskId=AVmlSLzNeftfP7Q1iU-Y
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AVmlSLzNeftfP7Q1iU-Y
