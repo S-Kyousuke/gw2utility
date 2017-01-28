@@ -31,7 +31,7 @@ import th.skyousuke.gw2utility.view.WalletValueTableCell;
 
 import java.util.Comparator;
 
-public class WalletTabController {
+public class WalletPageController {
 
     @FXML
     private TableView<Wallet> walletTableView;

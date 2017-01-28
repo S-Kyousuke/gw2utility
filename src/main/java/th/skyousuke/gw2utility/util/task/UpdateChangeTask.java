@@ -46,6 +46,8 @@ public class UpdateChangeTask implements AccountDataTask {
         AccountDataTaskRunner.getInstance().awaitTask(UpdateBankTask.getInstance());
         AccountDataTaskRunner.getInstance().awaitTask(UpdateMaterialTask.getInstance());
         AccountDataTaskRunner.getInstance().awaitTask(UpdateWalletsTask.getInstance());
+        AccountDataTaskRunner.getInstance().awaitTask(UpdateSellListTask.getInstance());
+        AccountDataTaskRunner.getInstance().awaitTask(UpdateBuyListTask.getInstance());
 
         ChangeCalculator changeCalculator = new ChangeCalculator();
         AccountData accountData = AccountData.getInstance();

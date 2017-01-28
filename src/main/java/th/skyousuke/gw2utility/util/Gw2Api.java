@@ -77,7 +77,7 @@ public class Gw2Api {
 
     private static final String HISTORY_TRANSACTION_API_URL = TRANSACTION_API_URL + "/history";
 
-    private static final int DEFAULT_TIMEOUT_SEC = 5;
+    private static final int DEFAULT_TIMEOUT_SEC = 10;
     private static final int BUFFER_SIZE = 4096;
 
     private static final Gw2Api instance = new Gw2Api();
@@ -106,18 +106,22 @@ public class Gw2Api {
         return readJsonFromUrl(urlString, DEFAULT_TIMEOUT_SEC);
     }
 
+    private String readJsonFromUrl(String urlString, String apiKey, String additionalRequest) throws IOException {
+        return readJsonFromUrl(urlString, apiKey, additionalRequest, DEFAULT_TIMEOUT_SEC);
+    }
+
     private String readJsonFromUrl(String urlString, String apiKey) throws IOException {
-        return readJsonFromUrl(urlString, apiKey, DEFAULT_TIMEOUT_SEC);
+        return readJsonFromUrl(urlString, apiKey, "", DEFAULT_TIMEOUT_SEC);
     }
 
     private String readJsonFromUrl(String urlString, int timeoutSec) throws IOException {
-        return readJsonFromUrl(urlString, null, timeoutSec);
+        return readJsonFromUrl(urlString, null, "", timeoutSec);
     }
 
-    private String readJsonFromUrl(String urlString, String apiKey, int timeoutSec) throws IOException {
+    private String readJsonFromUrl(String urlString, String apiKey, String additionalRequest, int timeoutSec) throws IOException {
         String fixedUrlString = urlString.replace(" ", "%20");
         if (apiKey != null) {
-            fixedUrlString += "?access_token=" + apiKey;
+            fixedUrlString += "?access_token=" + apiKey + additionalRequest;
         }
         URL url = new URL(fixedUrlString);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -214,56 +218,67 @@ public class Gw2Api {
         }
     }
 
-    //TODO: refactor this messy method
-    public Map<String, Character> getCharacters(List<String> characterNames, String apiKey) {
-        if (characterNames != null) {
+    public Map<String, Character> getCharacters(String apiKey) {
+        try {
+            final String charactersJson = readJsonFromUrl(CHARACTER_API_URL, apiKey, "&page=0");
+            final JsonArray charactersJsonArray =  GsonHelper.jsonParser.parse(charactersJson).getAsJsonArray();
             final Map<String, Character> characters = new HashMap<>();
-            final List<String> copyCharacterNames = new ArrayList<>(characterNames);
-            for (String characterName : copyCharacterNames) {
-                try {
-                    String characterJson = readJsonFromUrl(CHARACTER_API_URL + "/" + characterName, apiKey);
-                    JsonObject characterInSon = GsonHelper.jsonParser.parse(characterJson).getAsJsonObject();
-                    final String name = characterInSon.getAsJsonPrimitive("name").getAsString();
-                    final Equipment equipment;
-                    final ObservableList<Bag> bags = FXCollections.observableArrayList();
-                    final JsonArray equipmentInJson = characterInSon.getAsJsonArray("equipment");
-                    final ObservableList<EquipmentSlot> equipmentSlots = FXCollections.observableArrayList();
-                    for (int i = 0; i < equipmentInJson.size(); i++) {
-                        final JsonObject equipmentSlotInJson = equipmentInJson.get(i).getAsJsonObject();
-                        final int equipmentSlotId = equipmentSlotInJson.get("id").getAsInt();
-                        final String slotType = equipmentSlotInJson.get("slot").getAsString();
-                        equipmentSlots.add(new EquipmentSlot(equipmentSlotId, slotType));
-                    }
-                    equipment = new Equipment(equipmentSlots);
-                    final JsonArray bagsInJson = characterInSon.getAsJsonArray("bags");
-                    for (int i = 0; i < bagsInJson.size(); i++) {
-                        final JsonElement bagsInJsonElement = bagsInJson.get(i);
-                        if (bagsInJsonElement.isJsonObject()) {
-                            final JsonObject bagInJson = bagsInJson.get(i).getAsJsonObject();
-                            final int bagSlotId = bagInJson.get("id").getAsInt();
-                            final int size = bagInJson.get("size").getAsInt();
-                            final JsonArray inventoryInJson = bagInJson.get("inventory").getAsJsonArray();
-                            final ObservableList<ItemSlot> itemSlots = FXCollections.observableArrayList();
-                            for (int j = 0; j < inventoryInJson.size(); j++) {
-                                final JsonElement inventoryInJsonElement = inventoryInJson.get(j);
-                                if (inventoryInJsonElement.isJsonObject()) {
-                                    final JsonObject itemSlotInJson = inventoryInJsonElement.getAsJsonObject();
-                                    final int itemSlotId = itemSlotInJson.get("id").getAsInt();
-                                    final int itemSlotCount = itemSlotInJson.get("count").getAsInt();
-                                    itemSlots.add(new ItemSlot(itemSlotId, itemSlotCount));
-                                }
-                            }
-                            bags.add(new Bag(bagSlotId, size, new Inventory(itemSlots)));
-                        }
-                    }
-                    characters.put(name, new Character(name, equipment, bags));
-                } catch (IOException e) {
-                    Log.error("Exception while get character data", e);
-                }
+            for (int i = 0; i < charactersJsonArray.size(); i++) {
+                JsonObject characterJson = charactersJsonArray.get(i).getAsJsonObject();
+                final String name = characterJson.getAsJsonPrimitive("name").getAsString();
+                characters.put(name, new Character(name, getEquipment(characterJson), getBags(characterJson)));
             }
             return characters;
+        } catch (Exception e) {
+            Log.error("Exception while get character data", e);
+            return null;
         }
-        return null;
+    }
+
+    private Equipment getEquipment(JsonObject characterJson) {
+        final JsonArray equipmentJson = characterJson.getAsJsonArray("equipment");
+        final ObservableList<EquipmentSlot> equipmentSlots = FXCollections.observableArrayList();
+        for (int i = 0; i < equipmentJson.size(); i++) {
+            final JsonElement equipmentSlotJsonElement = equipmentJson.get(i);
+            if (equipmentSlotJsonElement.isJsonObject()) {
+                final JsonObject equipmentSlotJson = equipmentSlotJsonElement.getAsJsonObject();
+                final int equipmentSlotId = equipmentSlotJson.get("id").getAsInt();
+                final String slotType = equipmentSlotJson.get("slot").getAsString();
+                equipmentSlots.add(new EquipmentSlot(equipmentSlotId, slotType));
+            }
+        }
+        return new Equipment(equipmentSlots);
+    }
+
+    private ObservableList<Bag> getBags(JsonObject characterJson) {
+        final JsonArray bagsJson = characterJson.getAsJsonArray("bags");
+        final ObservableList<Bag> bags = FXCollections.observableArrayList();
+        for (int j = 0; j < bagsJson.size(); j++) {
+            final JsonElement bagJsonElement = bagsJson.get(j);
+            if (bagJsonElement.isJsonObject()) {
+                final JsonObject bagJson = bagJsonElement.getAsJsonObject();
+                final int bagSlotId = bagJson.get("id").getAsInt();
+                final int size = bagJson.get("size").getAsInt();
+                bags.add(new Bag(bagSlotId, size, getInventory(bagJson)));
+            }
+        }
+        return bags;
+    }
+
+    private Inventory getInventory(JsonObject bagJson) {
+        final JsonArray inventoryInJson = bagJson.get("inventory").getAsJsonArray();
+        final ObservableList<ItemSlot> itemSlots = FXCollections.observableArrayList();
+
+        for (int i = 0; i < inventoryInJson.size(); i++) {
+            final JsonElement itemSlotJsonElement = inventoryInJson.get(i);
+            if (itemSlotJsonElement.isJsonObject()) {
+                final JsonObject itemSlotJson = itemSlotJsonElement.getAsJsonObject();
+                final int itemSlotId = itemSlotJson.get("id").getAsInt();
+                final int itemSlotCount = itemSlotJson.get("count").getAsInt();
+                itemSlots.add(new ItemSlot(itemSlotId, itemSlotCount));
+            }
+        }
+        return new Inventory(itemSlots);
     }
 
     public boolean isOffline() {
@@ -356,8 +371,8 @@ public class Gw2Api {
             return currentBuys;
         } catch (IOException e) {
             Log.error("Exception while get current sell transactions", e);
+            return new ArrayList<>();
         }
-        return null;
     }
 
     public List<Transaction> getCurrentSellTransactions(String apiKey) {

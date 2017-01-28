@@ -21,8 +21,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-
-<GridPane hgap="10.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.TradingPostTabController">
+<GridPane hgap="10.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.TradingPostPageController">
     <Label text="Sell Listings">
         <padding>
             <Insets bottom="5.0" />

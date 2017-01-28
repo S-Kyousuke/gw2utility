@@ -19,7 +19,6 @@ package th.skyousuke.gw2utility.datamodel;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import th.skyousuke.gw2utility.util.CacheService;
 
 import java.util.Objects;
 import java.util.Observable;
@@ -35,12 +34,7 @@ public class Item extends Observable {
         this.id = new SimpleIntegerProperty(id);
         this.name =  new SimpleStringProperty(name);
         this.rarity = new SimpleObjectProperty<>(rarity);
-        this.iconPath = new SimpleStringProperty();
-        this.iconPath.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null)
-                CacheService.createImageCached("file:" + newValue);
-        });
-        this.iconPath.set(iconPath);
+        this.iconPath = new SimpleStringProperty(iconPath);
     }
 
     public int getId() {

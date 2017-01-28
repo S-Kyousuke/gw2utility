@@ -20,7 +20,6 @@ import th.skyousuke.gw2utility.datamodel.AccountData;
 import th.skyousuke.gw2utility.datamodel.Character;
 import th.skyousuke.gw2utility.util.Gw2Api;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -38,17 +37,14 @@ public class UpdateCharactersTask implements AccountDataTask {
     @Override
     public void runTask(CountDownLatch finishedSignal) {
         AccountDataTaskRunner.getInstance().awaitTask(UpdateCharacterNamesTask.getInstance());
-        final List<String> characterNames = AccountData.getInstance().getCharacterNames();
 
         final String apiKey = AccountData.getInstance().getApiKey();
-        if (!characterNames.isEmpty()) {
-            final Map<String, Character> downloadedCharacters = Gw2Api.getInstance().getCharacters(characterNames, apiKey);
+        final Map<String, Character> downloadedCharacters = Gw2Api.getInstance().getCharacters(apiKey);
 
-            final Map<String, Character> characters = AccountData.getInstance().getCharacters();
-            if (downloadedCharacters != null) {
-                characters.clear();
-                characters.putAll(downloadedCharacters);
-            }
+        final Map<String, Character> characters = AccountData.getInstance().getCharacters();
+        if (downloadedCharacters != null) {
+            characters.clear();
+            characters.putAll(downloadedCharacters);
         }
         finishedSignal.countDown();
     }

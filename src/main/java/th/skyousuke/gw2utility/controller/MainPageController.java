@@ -17,11 +17,16 @@
 package th.skyousuke.gw2utility.controller;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import th.skyousuke.gw2utility.Main;
@@ -44,7 +49,11 @@ public class MainPageController {
     @FXML
     private BorderPane mainPane;
     @FXML
-    private TradingPostTabController tradingPostTabController;
+    private TradingPostPageController tradingPostPageController;
+    @FXML
+    private Tab debugTab;
+    @FXML
+    private TabPane mainTabPane;
 
     @SuppressWarnings("unchecked")
     public void initialize() {
@@ -55,6 +64,8 @@ public class MainPageController {
         AccountDataAutoUpdater.getInstance().setUpdateButton(updateButton);
         AccountDataAutoUpdater.getInstance().setSaveButton(saveButton);
         AccountDataAutoUpdater.getInstance().startAutoUpdate();
+
+        mainTabPane.getTabs().remove(debugTab);
     }
 
     private void initExitConfirm() {
@@ -81,7 +92,7 @@ public class MainPageController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Platform.exit();
-            tradingPostTabController.dispose();
+            tradingPostPageController.dispose();
         }
     }
 
@@ -108,6 +119,21 @@ public class MainPageController {
             alert.setHeaderText("");
             alert.setContentText("Account data file has been saved successfully.");
             alert.showAndWait();
+        }
+    }
+
+    public void handleKeyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.F8) {
+                toggleDebugTab();
+        }
+    }
+
+    private void toggleDebugTab() {
+        final ObservableList<Tab> tabs = mainTabPane.getTabs();
+        if (tabs.contains(debugTab)) {
+            tabs.remove(debugTab);
+        } else {
+            tabs.add(debugTab);
         }
     }
 }

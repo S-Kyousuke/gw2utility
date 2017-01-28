@@ -54,7 +54,7 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class ChangeTabController {
+public class ChangePageController {
 
     @FXML
     private TableView<ItemSlot> itemChangeTableView;

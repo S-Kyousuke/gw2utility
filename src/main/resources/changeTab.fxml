@@ -23,8 +23,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-
-<GridPane fx:id="mainPane" hgap="10.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.ChangeTabController">
+<GridPane fx:id="mainPane" hgap="10.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.ChangePageController">
     <HBox alignment="CENTER_LEFT" GridPane.columnSpan="2">
         <padding>
             <Insets bottom="10.0" top="10.0" />

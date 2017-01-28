@@ -15,7 +15,7 @@
   -->
 
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane fx:controller="th.skyousuke.gw2utility.controller.WalletTabController"
+<BorderPane fx:controller="th.skyousuke.gw2utility.controller.WalletPageController"
             xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <fx:include fx:id="walletTableView" source="walletTable.fxml" BorderPane.alignment="CENTER"/>

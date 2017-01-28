@@ -18,17 +18,17 @@ package th.skyousuke.gw2utility.util;
 
 import javafx.scene.image.Image;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CacheService {
 
-    private static final Map<String, Image> imageCache = new HashMap<>();
+    private static final ConcurrentMap<String, Image> imageCache = new ConcurrentHashMap<>();
 
     private CacheService() {
     }
 
-    public static synchronized Image getImage(String imagePath) {
+    public static Image getImage(String imagePath) {
         if (imageCache.containsKey(imagePath)) {
             return imageCache.get(imagePath);
         }
@@ -36,10 +36,5 @@ public class CacheService {
         imageCache.put(imagePath, image);
         return image;
     }
-
-    public static synchronized void createImageCached(String imagePath) {
-        imageCache.put(imagePath, new Image(imagePath));
-    }
-
 
 }
