@@ -26,20 +26,26 @@ import th.skyousuke.gw2utility.util.gson.GsonHelper;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Item database class
  */
 public class ItemData {
-    private static final int MAX_DOWNLOAD_TRY_COUNT = 3;
 
     private static final String IMAGE_DIR = "items";
     private static final String DATA_FILE = "items.json";
 
     private static final ItemData instance = new ItemData();
-    private static final String LOADING_ITEM_NAME = "Loading...";
+
+    private ExecutorService executor = Executors.newFixedThreadPool(16);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
     private ObservableMap<Integer, Item> items = FXCollections.observableHashMap();
+
 
     private ItemData() {
     }
@@ -58,7 +64,7 @@ public class ItemData {
             return itemInDatabase;
         }
         else {
-            Item item = new Item(id, LOADING_ITEM_NAME, ItemRarity.BASIC, "");
+            Item item = new Item(id, "Loading...", ItemRarity.BASIC, "");
             downloadItemInfo(item);
             items.put(id, item);
             return item;
@@ -67,46 +73,30 @@ public class ItemData {
 
     private boolean isCorrectItem(Item item) {
         return item != null
-                && !item.getName().equals(LOADING_ITEM_NAME)
                 && FileHelper.exists(item.getIconPath());
     }
 
     private void downloadItemInfo(Item item) {
-        new Thread(() -> {
-            Item downloadedItem = tryToDownloadItemInfo(item.getId());
-            item.setName(downloadedItem.getName());
-            item.setRarity(downloadedItem.getRarity());
-
-            final String iconURL = downloadedItem.getIconPath();
-            final String iconPath = tryToDownloadItemIcon(iconURL);
-            item.setIconPath(iconPath);
-            saveData();
-        }).start();
-    }
-
-    private Item tryToDownloadItemInfo(int itemId) {
-        Item item = null;
-        int tryCount = 0;
-        while (item == null && tryCount != MAX_DOWNLOAD_TRY_COUNT) {
-            item = Gw2Api.getInstance().getItem(itemId);
-            tryCount++;
-        }
-        return item;
-    }
-
-    private String tryToDownloadItemIcon(String iconUrl) {
-        String iconPath = null;
-        int tryCount = 0;
-        while (iconPath == null && tryCount != MAX_DOWNLOAD_TRY_COUNT) {
-            try {
-                iconPath = Downloader.download(iconUrl, IMAGE_DIR, null);
-            } catch (IOException e) {
-                Log.warn("Exception while try to downloading item icon!", e);
-                break;
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                Item downloadedItem = Gw2Api.getInstance().getItem(item.getId());
+                if (downloadedItem != null) {
+                    item.setName(downloadedItem.getName());
+                    item.setRarity(downloadedItem.getRarity());
+                    final String iconURL = downloadedItem.getIconPath();
+                    try {
+                        final String iconPath = Downloader.download(iconURL, IMAGE_DIR, null);
+                        item.setIconPath(iconPath);
+                        saveData();
+                        return;
+                    } catch (IOException e) {
+                        Log.warn("Exception while downloading item icon", e);
+                    }
+                }
+                scheduler.schedule(this, 10, TimeUnit.SECONDS);
             }
-            tryCount++;
-        }
-        return iconPath;
+        });
     }
 
     private void saveData() {
@@ -121,5 +111,10 @@ public class ItemData {
             items.clear();
             items.putAll(loadedItems);
         }
+    }
+
+    public void stopUpdateService() {
+        executor.shutdown();
+        scheduler.shutdown();
     }
 }

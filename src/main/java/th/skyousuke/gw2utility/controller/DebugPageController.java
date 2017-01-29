@@ -16,38 +16,9 @@
 
 package th.skyousuke.gw2utility.controller;
 
-import javafx.application.Platform;
-import javafx.collections.MapChangeListener;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import th.skyousuke.gw2utility.datamodel.AccountData;
-import th.skyousuke.gw2utility.datamodel.Character;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class DebugPageController {
 
-    @FXML
-    private Label dataLabel;
-
     public void initialize() {
-        AccountData.getInstance().getCharacters().addListener(new MapChangeListener<String, Character>() {
-            private StringBuilder sb = new StringBuilder();
-
-            @Override
-            public void onChanged(Change<? extends String, ? extends Character> change) {
-                sb.setLength(0);
-                List<Character> characters = new ArrayList<>(AccountData.getInstance().getCharacters().values());
-                for (Character character : characters) {
-                    sb.append(character.toString());
-                    sb.append('\n');
-                    sb.append("=================");
-                    sb.append('\n');
-                }
-                Platform.runLater(() -> dataLabel.setText(sb.toString()));
-            }
-        });
 
     }
 

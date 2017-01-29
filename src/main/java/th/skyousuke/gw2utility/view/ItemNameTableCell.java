@@ -44,11 +44,11 @@ public class ItemNameTableCell<T> extends TableCell<T, Item> {
 
     @Override
     protected void updateItem(Item item, boolean empty) {
+        if (item != null)
+            item.deleteObserver(observer);
         if (empty || item == null) {
             setText(null);
             icon.setImage(null);
-            if (item != null)
-                item.deleteObserver(observer);
         } else {
             setText(item.getName());
             setTextFill(item.getRarity().getNameColor());
