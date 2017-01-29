@@ -55,6 +55,8 @@ public class Main extends Application {
     public void stop() throws Exception {
         AccountDataTaskRunner.getInstance().stopUpdateService();
         AccountDataAutoUpdater.getInstance().stopUpdateService();
+        ItemData.getInstance().stopUpdateService();
+        CurrencyData.getInstance().stopUpdateService();
         SettingsData.getInstance().saveSettings();
     }
 
