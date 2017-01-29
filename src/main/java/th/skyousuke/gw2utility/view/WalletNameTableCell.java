@@ -45,11 +45,11 @@ public class WalletNameTableCell  extends TableCell<Wallet, Currency>  {
 
     @Override
     protected void updateItem(Currency currency, boolean empty) {
+        if (currency != null)
+            currency.deleteObserver(observer);
         if (empty || currency == null) {
             setText(null);
             icon.setImage(null);
-            if (currency != null)
-                currency.deleteObserver(observer);
         } else {
             setText(currency.getName());
             icon.setImage(new Image("file:" + currency.getIconPath()));
