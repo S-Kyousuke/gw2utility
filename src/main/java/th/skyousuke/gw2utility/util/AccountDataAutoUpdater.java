@@ -128,8 +128,8 @@ public class AccountDataAutoUpdater {
         accountDataTaskRunner.startTask(UpdateMaterialTask.getInstance());
         accountDataTaskRunner.startTask(UpdateWalletsTask.getInstance());
         accountDataTaskRunner.startTask(UpdateSellListTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateChangeTask.getInstance());
         accountDataTaskRunner.startTask(UpdateBuyListTask.getInstance());
+        accountDataTaskRunner.startTask(UpdateChangeTask.getInstance());
 
         executor.submit(() -> {
             setStatusText("Updating character name data...");

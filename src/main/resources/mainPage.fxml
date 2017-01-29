@@ -26,18 +26,18 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<BorderPane fx:id="mainPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.MainPageController">
+<BorderPane fx:id="mainPane" onKeyPressed="#handleKeyPressed" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.MainPageController">
     <center>
-        <TabPane BorderPane.alignment="CENTER">
+        <TabPane fx:id="mainTabPane" BorderPane.alignment="CENTER">
             <tabs>
                 <Tab closable="false" text="Overview">
                     <content>
                         <GridPane alignment="CENTER" hgap="5.0" vgap="5.0">
                             <columnConstraints>
-                                <ColumnConstraints halignment="CENTER"/>
+                                <ColumnConstraints halignment="CENTER" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints/>
+                                <RowConstraints />
                             </rowConstraints>
                             <children>
                                 <Label fx:id="welcomeLabel" text="Welcome, Anonymous!" />
@@ -47,27 +47,32 @@
                 </Tab>
                 <Tab closable="false" text="Character">
                     <content>
-                        <fx:include fx:id="characterTab" source="characterTab.fxml"/>
+                        <fx:include fx:id="characterPage" source="characterTab.fxml" />
                     </content>
                 </Tab>
                 <Tab closable="false" text="Bank &amp; Material">
                     <content>
-                        <fx:include fx:id="bankAndMaterialTab" source="bankAndMaterialTab.fxml"/>
+                        <fx:include fx:id="bankAndMaterialPage" source="bankAndMaterialTab.fxml" />
                     </content>
                 </Tab>
                 <Tab closable="false" text="Wallet">
                     <content>
-                        <fx:include fx:id="walletTab" source="walletTab.fxml"/>
+                        <fx:include fx:id="walletPage" source="walletTab.fxml" />
                     </content>
                 </Tab>
                 <Tab closable="false" text="Trading Post">
                     <content>
-                        <fx:include fx:id="tradingPostTab" source="tradingPostTab.fxml"/>
+                        <fx:include fx:id="tradingPostPage" source="tradingPostTab.fxml" />
                     </content>
                 </Tab>
                 <Tab closable="false" text="Change">
                     <content>
-                        <fx:include fx:id="changeTab" source="changeTab.fxml"/>
+                        <fx:include fx:id="changePage" source="changeTab.fxml" />
+                    </content>
+                </Tab>
+                <Tab fx:id="debugTab" closable="false" text="Debug">
+                    <content>
+                        <fx:include fx:id="debugPage" source="debugTab.fxml" />
                     </content>
                 </Tab>
             </tabs>
@@ -77,8 +82,8 @@
         <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
                 <Label fx:id="updateStatusLabel" alignment="CENTER_RIGHT" text="Update Status Label" />
-                <Button fx:id="updateButton" onAction="#handleUpdateButton" text="Update"/>
-                <Button fx:id="saveButton" text="Save Data" onAction="#handleSaveDataButton"/>
+                <Button fx:id="updateButton" onAction="#handleUpdateButton" text="Update" />
+                <Button fx:id="saveButton" onAction="#handleSaveDataButton" text="Save Data" />
             </children>
             <BorderPane.margin>
                 <Insets bottom="5.0" top="5.0" />

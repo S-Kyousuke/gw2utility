@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package th.skyousuke.gw2utility.util;
+package th.skyousuke.gw2utility.controller;
 
-import javafx.scene.image.Image;
+public class DebugPageController {
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+    public void initialize() {
 
-public class CacheService {
-
-    private static final ConcurrentMap<String, Image> imageCache = new ConcurrentHashMap<>();
-
-    private CacheService() {
-    }
-
-    public static Image getImage(String imagePath) {
-        if (imageCache.containsKey(imagePath)) {
-            return imageCache.get(imagePath);
-        }
-        Image image = new Image(imagePath);
-        imageCache.put(imagePath, image);
-        return image;
     }
 
 }

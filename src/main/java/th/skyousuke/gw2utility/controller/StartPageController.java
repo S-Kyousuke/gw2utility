@@ -34,7 +34,9 @@ import th.skyousuke.gw2utility.util.SettingsData;
 import th.skyousuke.gw2utility.util.task.AccountDataTaskRunner;
 import th.skyousuke.gw2utility.util.task.UpdateAccountTask;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 
 public class StartPageController {
 
@@ -48,6 +50,8 @@ public class StartPageController {
     private CheckBox rememberCheckbox;
 
     public void initialize() {
+        promptLabel.managedProperty().bind(promptLabel.visibleProperty());
+
         // setup text field listener
         apiKeyField.textProperty().addListener((observable, oldValue, newValue) -> {
             if ("".equals(newValue)) {
@@ -76,6 +80,7 @@ public class StartPageController {
             if (AccountData.getInstance().getAccount() != null) {
                 if (rememberCheckbox.isSelected()) {
                     SettingsData.getInstance().getSettings().setApiKey(apiKeyField.getText());
+                    SettingsData.getInstance().saveSettings();
                 }
                 enterMainPage();
             } else {
@@ -95,7 +100,6 @@ public class StartPageController {
     private void showPromptLabel() {
         Platform.runLater(() -> {
             promptLabel.setVisible(true);
-            promptLabel.setManaged(true);
             promptLabel.getScene().getWindow().sizeToScene();
         });
     }
@@ -103,7 +107,6 @@ public class StartPageController {
     private void hidePromptLabel() {
         Platform.runLater(() -> {
             promptLabel.setVisible(false);
-            promptLabel.setManaged(false);
             promptLabel.getScene().getWindow().sizeToScene();
         });
     }
@@ -136,6 +139,15 @@ public class StartPageController {
     @FXML
     public void handleRememberCheckBox() {
         SettingsData.getInstance().getSettings().setRememberApiKey(rememberCheckbox.isSelected());
+    }
+
+    @FXML
+    public void handleLinkClick() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://account.arena.net/applications/create"));
+        } catch (Exception e) {
+            Log.warn("Exception while launching browser", e);
+        }
     }
 
 }

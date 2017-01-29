@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<GridPane hgap="10.0" fx:controller="th.skyousuke.gw2utility.controller.CharacterTabController"
+<GridPane hgap="10.0" fx:controller="th.skyousuke.gw2utility.controller.CharacterPageController"
           xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
     <HBox alignment="CENTER_LEFT" GridPane.columnSpan="2">
         <children>

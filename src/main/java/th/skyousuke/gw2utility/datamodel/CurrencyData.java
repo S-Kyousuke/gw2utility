@@ -19,14 +19,17 @@ package th.skyousuke.gw2utility.datamodel;
 import com.esotericsoftware.minlog.Log;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import javafx.concurrent.Task;
-import th.skyousuke.gw2utility.util.DownloadListener;
 import th.skyousuke.gw2utility.util.Downloader;
 import th.skyousuke.gw2utility.util.FileHelper;
 import th.skyousuke.gw2utility.util.Gw2Api;
 import th.skyousuke.gw2utility.util.gson.GsonHelper;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CurrencyData {
 
@@ -36,6 +39,9 @@ public class CurrencyData {
     private static final String DATA_FILE = "currencies.json";
 
     private static final CurrencyData instance = new CurrencyData();
+
+    private ExecutorService executor = Executors.newFixedThreadPool(4);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private final ObservableMap<Integer, Currency> currencies = FXCollections.observableHashMap();
 
@@ -64,36 +70,29 @@ public class CurrencyData {
     }
 
     private void downloadCurrencyInfo(Currency currency) {
-        new Thread(new Task<Void>() {
+        executor.submit(new Runnable() {
             @Override
-            protected Void call() throws Exception {
+            public void run() {
                 Currency downloadedCurrency = Gw2Api.getInstance().getCurrency(currency.getId());
                 currency.setName(downloadedCurrency.getName());
-                final String fileURL = downloadedCurrency.getIconPath();
-                Downloader.startDownloadTask(fileURL, IMAGE_DIR, new DownloadListener() {
-                    @Override
-                    public void onProgressUpdate(int percentComplete) {
-                        // do nothing
+                final String iconURL = downloadedCurrency.getIconPath();
+                if (iconURL != null) {
+                    try {
+                        final String iconPath = Downloader.download(iconURL, IMAGE_DIR, null);
+                        currency.setIconPath(iconPath);
+                        saveData();
+                        return;
+                    } catch (IOException e) {
+                        Log.warn("Exception while downloading currency icon", e);
                     }
-
-                    @Override
-                    public void finishDownloading(String filePath) {
-                        if (filePath != null) {
-                            currency.setIconPath(filePath);
-                            saveData();
-                        } else {
-                            downloadCurrencyInfo(currency);
-                        }
-                    }
-                });
-                return null;
+                }
+                scheduler.schedule(this, 10, TimeUnit.SECONDS);
             }
-        }).start();
+        });
     }
 
     private boolean isCorrectCurrency(Currency currency) {
         return currency != null
-                && !currency.getName().equals(LOADING_CURRENCY_NAME)
                 && FileHelper.exists(currency.getIconPath());
     }
 
@@ -109,5 +108,10 @@ public class CurrencyData {
             currencies.clear();
             currencies.putAll(loadedCurrencies);
         }
+    }
+
+    public void stopUpdateService() {
+        executor.shutdown();
+        scheduler.shutdown();
     }
 }
