@@ -18,6 +18,7 @@ package th.skyousuke.gw2utility.datamodel;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import th.skyousuke.gw2utility.datamodel.property.ItemProperty;
 
 public class ItemSlot implements ItemContainer {
 
@@ -25,10 +26,11 @@ public class ItemSlot implements ItemContainer {
     private SimpleIntegerProperty itemCount;
 
     public ItemSlot(int itemId, int count) {
-        this.item = new SimpleObjectProperty<>(ItemData.getInstance().getItem(itemId));
+        this.item = new ItemProperty(ItemData.getInstance().getItem(itemId));
         this.itemCount = new SimpleIntegerProperty(count);
     }
 
+    @Override
     public Item getItem() {
         return item.get();
     }
@@ -41,6 +43,7 @@ public class ItemSlot implements ItemContainer {
         this.item.set(item);
     }
 
+    @Override
     public int getItemCount() {
         return itemCount.get();
     }

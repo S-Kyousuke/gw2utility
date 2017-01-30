@@ -40,7 +40,7 @@ public class CurrencyData {
 
     private static final CurrencyData instance = new CurrencyData();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(4);
+    private ExecutorService executor = Executors.newCachedThreadPool();
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private final ObservableMap<Integer, Currency> currencies = FXCollections.observableHashMap();
@@ -86,7 +86,7 @@ public class CurrencyData {
                         Log.warn("Exception while downloading currency icon", e);
                     }
                 }
-                scheduler.schedule(this, 10, TimeUnit.SECONDS);
+                scheduler.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
     }

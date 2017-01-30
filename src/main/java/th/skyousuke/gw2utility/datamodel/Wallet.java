@@ -18,13 +18,14 @@ package th.skyousuke.gw2utility.datamodel;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import th.skyousuke.gw2utility.datamodel.property.CurrencyProperty;
 
 public class Wallet {
     private SimpleObjectProperty<Currency> currency;
     private SimpleIntegerProperty value;
 
     public Wallet(int currencyId, int value) {
-        currency = new SimpleObjectProperty<>(CurrencyData.getInstance().getCurrency(currencyId));
+        currency = new CurrencyProperty(CurrencyData.getInstance().getCurrency(currencyId));
         this.value = new SimpleIntegerProperty(value);
     }
 

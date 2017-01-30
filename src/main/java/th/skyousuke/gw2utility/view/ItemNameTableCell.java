@@ -16,21 +16,17 @@
 
 package th.skyousuke.gw2utility.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.image.ImageView;
 import th.skyousuke.gw2utility.datamodel.Item;
 import th.skyousuke.gw2utility.util.CacheService;
 
-import java.util.Observer;
-
 
 public class ItemNameTableCell<T> extends TableCell<T, Item> {
 
     private static final int ICON_SIZE = 16;
 
-    private Observer observer;
     private ImageView icon;
 
     public ItemNameTableCell() {
@@ -44,8 +40,6 @@ public class ItemNameTableCell<T> extends TableCell<T, Item> {
 
     @Override
     protected void updateItem(Item item, boolean empty) {
-        if (item != null)
-            item.deleteObserver(observer);
         if (empty || item == null) {
             setText(null);
             icon.setImage(null);
@@ -53,12 +47,6 @@ public class ItemNameTableCell<T> extends TableCell<T, Item> {
             setText(item.getName());
             setTextFill(item.getRarity().getNameColor());
             icon.setImage(CacheService.getImage("file:" + item.getIconPath()));
-            observer = (o, arg) -> Platform.runLater(() -> {
-                setText(item.getName());
-                setTextFill(item.getRarity().getNameColor());
-                icon.setImage(CacheService.getImage("file:" + item.getIconPath()));
-            });
-            item.addObserver(observer);
         }
     }
 

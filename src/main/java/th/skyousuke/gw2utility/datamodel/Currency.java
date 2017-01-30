@@ -20,9 +20,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
-import java.util.Observable;
 
-public class Currency extends Observable {
+public class Currency {
 
     private SimpleIntegerProperty id;
     private SimpleStringProperty name;
@@ -44,8 +43,6 @@ public class Currency extends Observable {
 
     public void setId(int id) {
         this.id.set(id);
-        setChanged();
-        notifyObservers();
     }
 
     public String getName() {
@@ -58,8 +55,6 @@ public class Currency extends Observable {
 
     public void setName(String name) {
         this.name.set(name);
-        setChanged();
-        notifyObservers();
     }
 
     public String getIconPath() {
@@ -72,8 +67,6 @@ public class Currency extends Observable {
 
     public void setIconPath(String iconPath) {
         this.iconPath.set(iconPath);
-        setChanged();
-        notifyObservers();
     }
 
     @Override

@@ -16,7 +16,6 @@
 
 package th.skyousuke.gw2utility.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.image.Image;
@@ -24,14 +23,11 @@ import javafx.scene.image.ImageView;
 import th.skyousuke.gw2utility.datamodel.Currency;
 import th.skyousuke.gw2utility.datamodel.Wallet;
 
-import java.util.Observer;
-
 
 public class WalletNameTableCell  extends TableCell<Wallet, Currency>  {
 
     private static final int ICON_SIZE = 16;
 
-    private Observer observer;
     private ImageView icon;
 
     public WalletNameTableCell() {
@@ -45,19 +41,12 @@ public class WalletNameTableCell  extends TableCell<Wallet, Currency>  {
 
     @Override
     protected void updateItem(Currency currency, boolean empty) {
-        if (currency != null)
-            currency.deleteObserver(observer);
         if (empty || currency == null) {
             setText(null);
             icon.setImage(null);
         } else {
             setText(currency.getName());
             icon.setImage(new Image("file:" + currency.getIconPath()));
-            observer = (o, arg) -> Platform.runLater(() -> {
-                setText(currency.getName());
-                icon.setImage(new Image("file:" + currency.getIconPath()));
-            });
-            currency.addObserver(observer);
         }
     }
 }

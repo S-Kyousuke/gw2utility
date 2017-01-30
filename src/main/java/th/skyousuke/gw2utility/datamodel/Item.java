@@ -21,9 +21,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
-import java.util.Observable;
 
-public class Item extends Observable {
+public class Item {
 
     private SimpleIntegerProperty id;
     private SimpleStringProperty name;
@@ -47,8 +46,6 @@ public class Item extends Observable {
 
     public void setId(int id) {
         this.id.set(id);
-        setChanged();
-        notifyObservers();
     }
 
     public String getName() {
@@ -61,8 +58,6 @@ public class Item extends Observable {
 
     public void setName(String name) {
         this.name.set(name);
-        setChanged();
-        notifyObservers();
     }
 
     public ItemRarity getRarity() {
@@ -75,8 +70,6 @@ public class Item extends Observable {
 
     public void setRarity(ItemRarity rarity) {
         this.rarity.set(rarity);
-        setChanged();
-        notifyObservers();
     }
 
     public String getIconPath() {
@@ -89,8 +82,6 @@ public class Item extends Observable {
 
     public void setIconPath(String iconPath) {
         this.iconPath.set(iconPath);
-        setChanged();
-        notifyObservers();
     }
 
     @Override
