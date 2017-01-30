@@ -41,11 +41,10 @@ public class ItemData {
 
     private static final ItemData instance = new ItemData();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(16);
+    private ExecutorService executor = Executors.newCachedThreadPool();
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
     private ObservableMap<Integer, Item> items = FXCollections.observableHashMap();
-
 
     private ItemData() {
     }
@@ -94,7 +93,7 @@ public class ItemData {
                         Log.warn("Exception while downloading item icon", e);
                     }
                 }
-                scheduler.schedule(this, 10, TimeUnit.SECONDS);
+                scheduler.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
     }
