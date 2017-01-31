@@ -60,8 +60,7 @@ public class CurrencyData {
         Currency currencyInDatabase = currencies.get(id);
         if (isCorrectCurrency(currencyInDatabase)) {
             return currencyInDatabase;
-        }
-        else {
+        } else {
             Currency currency = new Currency(id, LOADING_CURRENCY_NAME, "");
             downloadCurrencyInfo(currency);
             currencies.put(id, currency);
@@ -74,21 +73,27 @@ public class CurrencyData {
             @Override
             public void run() {
                 Currency downloadedCurrency = Gw2Api.getInstance().getCurrency(currency.getId());
-                currency.setName(downloadedCurrency.getName());
-                final String iconURL = downloadedCurrency.getIconPath();
-                if (iconURL != null) {
-                    try {
-                        final String iconPath = Downloader.download(iconURL, IMAGE_DIR, null);
+                if (downloadedCurrency != null) {
+                    currency.setName(downloadedCurrency.getName());
+                    final String iconPath = downloadCurrencyIcon(downloadedCurrency.getIconPath());
+                    if (iconPath != null) {
                         currency.setIconPath(iconPath);
                         saveData();
                         return;
-                    } catch (IOException e) {
-                        Log.warn("Exception while downloading currency icon", e);
                     }
                 }
                 scheduler.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
+    }
+
+    private String downloadCurrencyIcon(String url) {
+        try {
+            return Downloader.download(url, IMAGE_DIR, null);
+        } catch (IOException e) {
+            Log.warn("Exception while downloading currency icon", e);
+            return null;
+        }
     }
 
     private boolean isCorrectCurrency(Currency currency) {

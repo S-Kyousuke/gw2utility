@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package th.skyousuke.gw2utility.datamodel.property;
+package th.skyousuke.gw2utility.util;
 
-import javafx.beans.property.SimpleObjectProperty;
-import th.skyousuke.gw2utility.datamodel.Currency;
+import th.skyousuke.gw2utility.datamodel.Wallet;
+import th.skyousuke.gw2utility.datamodel.WalletValue;
 
-public class CurrencyProperty extends SimpleObjectProperty<Currency> {
+public class WalletValueCalculator {
 
-    public CurrencyProperty(Currency currency) {
-        set(currency);
-        get().idProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
-        get().nameProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
-        get().iconPathProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
+    public WalletValue getWalletValue(Wallet wallet) {
+        if (wallet.getCurrency().getId() == Gw2Api.COIN_ID) {
+            return new WalletValue(wallet, wallet.getValue());
+        }
+        return new WalletValue(wallet, 0);
     }
 }

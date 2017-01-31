@@ -21,6 +21,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -61,12 +63,45 @@ public class AccountData {
     private final ObservableList<Transaction> referenceBuyTransactions = FXCollections.observableArrayList();
     private LocalDateTime referenceTime;
 
-    private ObservableList<ItemSlot> itemChange = FXCollections.observableArrayList();
-    private ObservableList<Wallet> walletChange = FXCollections.observableArrayList();
+    private final ObservableList<ItemContainerValue> itemValueChange = FXCollections.observableArrayList();
+    private final SimpleIntegerProperty itemValueChangeNumber = new SimpleIntegerProperty();
+
+    private final ObservableList<WalletValue> walletValueChange = FXCollections.observableArrayList();
+    private final SimpleIntegerProperty walletValueChangeNumber = new SimpleIntegerProperty();
+
+    private final SimpleIntegerProperty totalValueChangeNumber = new SimpleIntegerProperty();
+
+    private final ObservableList<ItemSlot> itemChange = FXCollections.observableArrayList();
+    private final ObservableList<Wallet> walletChange = FXCollections.observableArrayList();
 
     private Label referenceDataLabel;
 
     private AccountData() {
+//        itemValueChangeNumber.bind(Bindings.createIntegerBinding(() -> {
+//            int sumValue = 0;
+//            for (ItemContainerValue eachItemValueChange : itemValueChange) {
+//                sumValue += eachItemValueChange.getTotalIncomeValue();
+//            }
+//            return sumValue;
+//        }, itemValueChange));
+
+        itemValueChangeNumber.bind(Bindings.createIntegerBinding(() -> {
+            int sumValue = 0;
+            for (ItemContainerValue eachItemValueChange : itemValueChange) {
+                sumValue += eachItemValueChange.getTotalIncomeValue();
+            }
+            return sumValue;
+        }, itemValueChange));
+
+        walletValueChangeNumber.bind(Bindings.createIntegerBinding(() -> {
+            int sumValue = 0;
+            for (WalletValue eachWalletValueChange : walletValueChange) {
+                sumValue += eachWalletValueChange.getIncomeValue();
+            }
+            return sumValue;
+        }, walletValueChange));
+
+        totalValueChangeNumber.bind(Bindings.add(itemValueChangeNumber, walletValueChangeNumber));
     }
 
     public static AccountData getInstance() {
@@ -165,6 +200,38 @@ public class AccountData {
         return walletChange;
     }
 
+    public ObservableList<ItemContainerValue> getItemValueChange() {
+        return itemValueChange;
+    }
+
+    public int getItemValueChangeNumber() {
+        return itemValueChangeNumber.get();
+    }
+
+    public SimpleIntegerProperty itemValueChangeNumberProperty() {
+        return itemValueChangeNumber;
+    }
+
+    public int getWalletValueChangeNumber() {
+        return walletValueChangeNumber.get();
+    }
+
+    public SimpleIntegerProperty walletValueChangeNumberProperty() {
+        return walletValueChangeNumber;
+    }
+
+    public int getTotalValueChangeNumber() {
+        return totalValueChangeNumber.get();
+    }
+
+    public SimpleIntegerProperty totalValueChangeNumberProperty() {
+        return totalValueChangeNumber;
+    }
+
+    public ObservableList<WalletValue> getWalletValueChange() {
+        return walletValueChange;
+    }
+
     public void setReferenceData() {
         referenceCharacterNames.clear();
         referenceCharacters.clear();
@@ -187,7 +254,7 @@ public class AccountData {
 
     private void setReferenceTime(LocalDateTime localDateTime) {
         referenceTime = localDateTime;
-        Platform.runLater(() -> referenceDataLabel.setText("Reference Data: " + DateTimeHelper.dateTimeFormatter.format(localDateTime)));
+        Platform.runLater(() -> referenceDataLabel.setText(DateTimeHelper.dateTimeFormatter.format(localDateTime)));
     }
 
     public boolean isReferenceDataSet() {

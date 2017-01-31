@@ -26,38 +26,41 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<GridPane alignment="center" hgap="10" stylesheets="@style.css" vgap="10" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.StartPageController">
+<GridPane alignment="center" hgap="10" stylesheets="@css/style.css" vgap="10" xmlns="http://javafx.com/javafx/8.0.112"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.StartPageController">
     <columnConstraints>
-        <ColumnConstraints />
+        <ColumnConstraints/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints />
-        <RowConstraints />
-        <RowConstraints />
+        <RowConstraints/>
+        <RowConstraints/>
+        <RowConstraints/>
     </rowConstraints>
     <children>
-        <TextField fx:id="apiKeyField" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" promptText="API Key" />
-        <Button fx:id="loginButton" disable="true" maxWidth="150.0" minWidth="150.0" onAction="#handleLoginButton" prefWidth="150.0" text="Login" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+        <TextField fx:id="apiKeyField" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" promptText="API Key"/>
+        <Button fx:id="loginButton" disable="true" maxWidth="150.0" minWidth="150.0" onAction="#handleLoginButton"
+                prefWidth="150.0" text="Login" GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
         <VBox GridPane.rowIndex="1">
             <children>
                 <GridPane>
                     <children>
-                        <CheckBox fx:id="rememberCheckbox" onAction="#handleRememberCheckBox" text="Remember Me" />
-                        <Hyperlink contentDisplay="CENTER" onAction="#handleLinkClick" text="Get API Key" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="rememberCheckbox" onAction="#handleRememberCheckBox" text="Remember Me"/>
+                        <Hyperlink contentDisplay="CENTER" onAction="#handleLinkClick" text="Get API Key"
+                                   GridPane.columnIndex="1"/>
                     </children>
-               <columnConstraints>
-                  <ColumnConstraints />
-                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-               </rowConstraints>
+                    <columnConstraints>
+                        <ColumnConstraints/>
+                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints/>
+                    </rowConstraints>
                 </GridPane>
-                <Label fx:id="promptLabel" managed="false" text="promptLabel" textFill="RED" visible="false" />
+                <Label fx:id="promptLabel" managed="false" text="promptLabel" textFill="RED" visible="false"/>
             </children>
         </VBox>
     </children>
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 </GridPane>

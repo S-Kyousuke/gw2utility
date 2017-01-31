@@ -25,7 +25,7 @@ import th.skyousuke.gw2utility.datamodel.CurrencyData;
 import th.skyousuke.gw2utility.datamodel.ItemData;
 import th.skyousuke.gw2utility.util.AccountDataAutoUpdater;
 import th.skyousuke.gw2utility.util.SettingsData;
-import th.skyousuke.gw2utility.util.task.AccountDataTaskRunner;
+import th.skyousuke.gw2utility.util.task.AwaitableTaskRunner;
 
 import java.io.IOException;
 
@@ -53,7 +53,7 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-        AccountDataTaskRunner.getInstance().stopUpdateService();
+        AwaitableTaskRunner.getInstance().stopUpdateService();
         AccountDataAutoUpdater.getInstance().stopUpdateService();
         ItemData.getInstance().stopUpdateService();
         CurrencyData.getInstance().stopUpdateService();

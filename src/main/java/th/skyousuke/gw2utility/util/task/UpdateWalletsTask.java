@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateWalletsTask implements AccountDataTask {
+public class UpdateWalletsTask implements AwaitableTask {
 
     private static final UpdateWalletsTask instance = new UpdateWalletsTask();
 

@@ -31,7 +31,7 @@ import th.skyousuke.gw2utility.datamodel.AccountData;
 import th.skyousuke.gw2utility.util.Gw2Api;
 import th.skyousuke.gw2utility.util.Settings;
 import th.skyousuke.gw2utility.util.SettingsData;
-import th.skyousuke.gw2utility.util.task.AccountDataTaskRunner;
+import th.skyousuke.gw2utility.util.task.AwaitableTaskRunner;
 import th.skyousuke.gw2utility.util.task.UpdateAccountTask;
 
 import java.awt.*;
@@ -74,9 +74,9 @@ public class StartPageController {
         loginButton.setDisable(true);
         hidePromptLabel();
         AccountData.getInstance().setApiKey(apiKeyField.getText());
-        AccountDataTaskRunner.getInstance().startTask(UpdateAccountTask.getInstance());
+        AwaitableTaskRunner.getInstance().startTask(UpdateAccountTask.getInstance());
         new Thread(() -> {
-            AccountDataTaskRunner.getInstance().awaitTask(UpdateAccountTask.getInstance());
+            AwaitableTaskRunner.getInstance().awaitTask(UpdateAccountTask.getInstance());
             if (AccountData.getInstance().getAccount() != null) {
                 if (rememberCheckbox.isSelected()) {
                     SettingsData.getInstance().getSettings().setApiKey(apiKeyField.getText());
@@ -124,7 +124,7 @@ public class StartPageController {
             }
             if (root != null) {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
-                stage.setScene(new Scene(root, 800, 600));
+                stage.setScene(new Scene(root, MainPageController.PAGE_WIDTH, MainPageController.PAGE_HEIGHT));
                 stage.sizeToScene();
                 stage.show();
                 stage.centerOnScreen();

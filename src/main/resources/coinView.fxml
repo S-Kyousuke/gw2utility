@@ -23,24 +23,24 @@
 <fx:root alignment="CENTER_RIGHT" spacing="5.0" type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
 
-    <Label fx:id="goldLabel" text="9999">
+    <Label fx:id="goldLabel" text="9999" contentDisplay="RIGHT">
         <graphic>
             <ImageView fitHeight="16.0" fitWidth="16.0">
-                <Image url="@images/Gold_coin.png"/>
+                <Image url="@images/currencies-small/Gold_coin.png"/>
             </ImageView>
         </graphic>
     </Label>
-    <Label fx:id="silverLabel" text="99">
+    <Label fx:id="silverLabel" text="99" contentDisplay="RIGHT">
         <graphic>
             <ImageView fitHeight="16.0" fitWidth="16.0">
-                <Image url="@images/Silver_coin.png"/>
+                <Image url="@images/currencies-small/Silver_coin.png"/>
             </ImageView>
         </graphic>
     </Label>
-    <Label fx:id="copperLabel" text="99">
+    <Label fx:id="copperLabel" text="99" contentDisplay="RIGHT">
         <graphic>
             <ImageView fitHeight="16.0" fitWidth="16.0">
-                <Image url="@images/Copper_coin.png"/>
+                <Image url="@images/currencies-small/Copper_coin.png"/>
             </ImageView>
         </graphic>
     </Label>

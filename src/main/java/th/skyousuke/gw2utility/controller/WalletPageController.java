@@ -21,11 +21,11 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import th.skyousuke.gw2utility.datamodel.AccountData;
 import th.skyousuke.gw2utility.datamodel.Currency;
 import th.skyousuke.gw2utility.datamodel.Wallet;
 import th.skyousuke.gw2utility.util.JavaFXControlUtils;
+import th.skyousuke.gw2utility.view.CurrencyValueFactory;
 import th.skyousuke.gw2utility.view.WalletNameTableCell;
 import th.skyousuke.gw2utility.view.WalletValueTableCell;
 
@@ -46,13 +46,13 @@ public class WalletPageController {
         walletTableView.setItems(AccountData.getInstance().getWallets());
 
         TableColumn<Wallet, Currency> nameColumn = (TableColumn<Wallet, Currency>) walletTableView.getColumns().get(0);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("currency"));
-        nameColumn.setCellFactory(param -> new WalletNameTableCell());
+        nameColumn.setCellValueFactory(new CurrencyValueFactory<>());
+        nameColumn.setCellFactory(param -> new WalletNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Currency::getName));
 
         TableColumn<Wallet, Wallet> valueColumn = (TableColumn<Wallet, Wallet>) walletTableView.getColumns().get(1);
         valueColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue()));
-        valueColumn.setCellFactory(param -> new WalletValueTableCell());
+        valueColumn.setCellFactory(param -> new WalletValueTableCell<>());
         valueColumn.setComparator(Comparator.comparing(Wallet::getValue));
     }
 

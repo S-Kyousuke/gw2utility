@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2017 Surasek Nusati <surasek@gmail.com>
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import th.skyousuke.gw2utility.view.CoinView?>
+<BorderPane stylesheets="@css/style.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="th.skyousuke.gw2utility.controller.ItemValueChangeController">
+    <center>
+        <fx:include fx:id="itemValueTable" source="itemValueTable.fxml" />
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Label text="Total Income Value:">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <CoinView fx:id="totalIncomeValue" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="5.0" right="5.0" top="5.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -2,8 +2,8 @@ package th.skyousuke.gw2utility.util;
 
 public interface DownloadListener {
 
-   void onProgressUpdate(int percentComplete);
+    void onProgressUpdate(int percentComplete);
 
-   void finishDownloading(String downloadedFilePath);
+    void finishDownloading(String downloadedFilePath);
 
 }

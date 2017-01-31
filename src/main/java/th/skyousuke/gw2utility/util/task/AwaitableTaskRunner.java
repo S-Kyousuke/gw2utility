@@ -22,28 +22,28 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AccountDataTaskRunner {
+public class AwaitableTaskRunner {
 
-    private static final AccountDataTaskRunner instance = new AccountDataTaskRunner();
+    private static final AwaitableTaskRunner instance = new AwaitableTaskRunner();
 
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    private Map<AccountDataTask, CountDownLatch> finishedSignals = new HashMap<>();
+    private Map<AwaitableTask, CountDownLatch> finishedSignals = new HashMap<>();
 
-    private AccountDataTaskRunner() {
+    private AwaitableTaskRunner() {
     }
 
-    public static AccountDataTaskRunner getInstance() {
+    public static AwaitableTaskRunner getInstance() {
         return instance;
     }
 
-    public void startTask(AccountDataTask task) {
+    public void startTask(AwaitableTask task) {
         final CountDownLatch finishedSignal = new CountDownLatch(1);
         finishedSignals.put(task, finishedSignal);
         executor.execute(() -> task.runTask(finishedSignal));
     }
 
-    public void awaitTask(AccountDataTask task) {
+    public void awaitTask(AwaitableTask task) {
         CountDownLatch updateSignal = finishedSignals.get(task);
         if (updateSignal != null) {
             try {

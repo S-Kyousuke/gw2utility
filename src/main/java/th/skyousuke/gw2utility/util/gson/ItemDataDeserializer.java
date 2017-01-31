@@ -49,7 +49,12 @@ public class ItemDataDeserializer implements JsonDeserializer<Map<Integer, Item>
             jsonPrimitive = itemInJson.getAsJsonPrimitive("iconPath");
             final String iconPath = jsonPrimitive.isJsonNull() ? "" : jsonPrimitive.getAsString();
 
-            items.put(id, new Item(id, name, rarity, iconPath));
+
+            final boolean boundOnAcquire = itemInJson.getAsJsonPrimitive("boundOnAcquire").getAsBoolean();
+            final boolean noSell = itemInJson.getAsJsonPrimitive("noSell").getAsBoolean();
+            final int vendorPrice = itemInJson.getAsJsonPrimitive("vendorPrice").getAsInt();
+
+            items.put(id, new Item(id, name, rarity, iconPath, boundOnAcquire, noSell, vendorPrice));
         }
         return items;
     }

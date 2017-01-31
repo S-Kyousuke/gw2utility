@@ -23,7 +23,7 @@ import th.skyousuke.gw2utility.util.Gw2Api;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateCharactersTask implements AccountDataTask {
+public class UpdateCharactersTask implements AwaitableTask {
 
     private static final UpdateCharactersTask instance = new UpdateCharactersTask();
 
@@ -36,7 +36,7 @@ public class UpdateCharactersTask implements AccountDataTask {
 
     @Override
     public void runTask(CountDownLatch finishedSignal) {
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateCharacterNamesTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateCharacterNamesTask.getInstance());
 
         final String apiKey = AccountData.getInstance().getApiKey();
         final Map<String, Character> downloadedCharacters = Gw2Api.getInstance().getCharacters(apiKey);

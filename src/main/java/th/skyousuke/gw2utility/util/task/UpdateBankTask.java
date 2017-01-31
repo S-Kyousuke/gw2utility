@@ -23,7 +23,7 @@ import th.skyousuke.gw2utility.util.Gw2Api;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateBankTask implements AccountDataTask {
+public class UpdateBankTask implements AwaitableTask {
 
     private static final UpdateBankTask instance = new UpdateBankTask();
 

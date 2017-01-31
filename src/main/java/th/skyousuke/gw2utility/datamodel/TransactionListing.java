@@ -19,7 +19,6 @@ package th.skyousuke.gw2utility.datamodel;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import th.skyousuke.gw2utility.datamodel.property.ItemProperty;
 import th.skyousuke.gw2utility.util.Gw2Api;
 
 import java.time.Clock;
@@ -29,7 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TransactionListing {
+public class TransactionListing implements ItemContainer {
 
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -37,11 +36,11 @@ public class TransactionListing {
     private final SimpleIntegerProperty buyPrice = new SimpleIntegerProperty();
     private final SimpleIntegerProperty sellPrice = new SimpleIntegerProperty();
     private final SimpleLongProperty ageInSeconds = new SimpleLongProperty();
-    private final ItemProperty item;
+    private final SimpleObjectProperty<Item> item;
 
     public TransactionListing(Transaction transaction) {
         this.transaction.set(transaction);
-        item = new ItemProperty(ItemData.getInstance().getItem(transaction.getItemId()));
+        item = new SimpleObjectProperty<>(ItemData.getInstance().getItem(transaction.getItemId()));
 
         executor.scheduleAtFixedRate(() -> ageInSeconds.set(getTransaction().getDateCreated()
                 .until(LocalDateTime.now(Clock.systemUTC()), ChronoUnit.SECONDS)), 0, 1, TimeUnit.SECONDS);
@@ -103,11 +102,12 @@ public class TransactionListing {
         this.ageInSeconds.set(ageInSeconds);
     }
 
+    @Override
     public Item getItem() {
         return item.get();
     }
 
-    public ItemProperty itemProperty() {
+    public SimpleObjectProperty<Item> itemProperty() {
         return item;
     }
 
@@ -117,5 +117,10 @@ public class TransactionListing {
 
     public void stopAgeCalculation() {
         executor.shutdown();
+    }
+
+    @Override
+    public int getItemCount() {
+        return transaction.get().getQuantity();
     }
 }

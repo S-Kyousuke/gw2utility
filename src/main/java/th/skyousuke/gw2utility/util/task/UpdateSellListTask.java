@@ -24,7 +24,7 @@ import th.skyousuke.gw2utility.util.Gw2Api;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateSellListTask implements AccountDataTask {
+public class UpdateSellListTask implements AwaitableTask {
 
     private static final UpdateSellListTask instance = new UpdateSellListTask();
 

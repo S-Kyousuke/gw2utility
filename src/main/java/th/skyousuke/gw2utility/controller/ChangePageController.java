@@ -16,12 +16,17 @@
 
 package th.skyousuke.gw2utility.controller;
 
+import com.esotericsoftware.minlog.Log;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -34,6 +39,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import th.skyousuke.gw2utility.Main;
 import th.skyousuke.gw2utility.datamodel.AccountData;
 import th.skyousuke.gw2utility.datamodel.Currency;
@@ -43,14 +50,17 @@ import th.skyousuke.gw2utility.datamodel.Wallet;
 import th.skyousuke.gw2utility.util.AccountDataAutoUpdater;
 import th.skyousuke.gw2utility.util.CustomColor;
 import th.skyousuke.gw2utility.util.JavaFXControlUtils;
-import th.skyousuke.gw2utility.util.task.AccountDataTaskRunner;
+import th.skyousuke.gw2utility.util.task.AwaitableTaskRunner;
 import th.skyousuke.gw2utility.util.task.UpdateChangeTask;
+import th.skyousuke.gw2utility.view.CoinView;
 import th.skyousuke.gw2utility.view.ItemCountTableCell;
 import th.skyousuke.gw2utility.view.ItemNameTableCell;
+import th.skyousuke.gw2utility.view.ItemValueFactory;
 import th.skyousuke.gw2utility.view.WalletNameTableCell;
 import th.skyousuke.gw2utility.view.WalletValueTableCell;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -67,8 +77,14 @@ public class ChangePageController {
     @FXML
     private GridPane mainPane;
 
-    private ObservableList<ItemSlot> itemChange;
+    @FXML
+    private CoinView itemValueChange;
+    @FXML
+    private CoinView walletValueChange;
+    @FXML
+    private CoinView totalValueChange;
 
+    private ObservableList<ItemSlot> itemChange;
     private ObservableList<Wallet> walletChange;
 
     public void initialize() {
@@ -103,6 +119,14 @@ public class ChangePageController {
 
         initItemChangePane();
         initWalletChangePane();
+
+        itemValueChange.setShowPlusSign(true);
+        walletValueChange.setShowPlusSign(true);
+        totalValueChange.setShowPlusSign(true);
+
+        itemValueChange.valueProperty().bind(AccountData.getInstance().itemValueChangeNumberProperty());
+        walletValueChange.valueProperty().bind(AccountData.getInstance().walletValueChangeNumberProperty());
+        totalValueChange.valueProperty().bind(Bindings.add(itemValueChange.valueProperty(), walletValueChange.valueProperty()));
     }
 
     @SuppressWarnings("unchecked")
@@ -113,13 +137,13 @@ public class ChangePageController {
         countColumn.setCellValueFactory(new PropertyValueFactory<>("itemCount"));
         countColumn.setCellFactory(param -> {
             final ItemCountTableCell<ItemSlot> itemCountTableCell1 = new ItemCountTableCell<>();
-            itemCountTableCell1.setSignedDisplay(true);
+            itemCountTableCell1.setShowPlusSign(true);
             itemCountTableCell1.setTextColor(Color.WHITE, CustomColor.positiveValueColor, CustomColor.negativeValueColor);
             return itemCountTableCell1;
         });
 
         TableColumn<ItemSlot, Item> nameColumn = (TableColumn<ItemSlot, Item>) itemChangeTableView.getColumns().get(1);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("item"));
+        nameColumn.setCellValueFactory(new ItemValueFactory<>());
         nameColumn.setCellFactory(param -> new ItemNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Item::getName));
     }
@@ -130,13 +154,13 @@ public class ChangePageController {
 
         TableColumn<Wallet, Currency> nameColumn = (TableColumn<Wallet, Currency>) walletChangeTableView.getColumns().get(0);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("currency"));
-        nameColumn.setCellFactory(param -> new WalletNameTableCell());
+        nameColumn.setCellFactory(param -> new WalletNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Currency::getName));
 
         TableColumn<Wallet, Wallet> valueColumn = (TableColumn<Wallet, Wallet>) walletChangeTableView.getColumns().get(1);
         valueColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue()));
         valueColumn.setCellFactory(param -> {
-            final WalletValueTableCell walletValueTableCell = new WalletValueTableCell();
+            final WalletValueTableCell<Wallet> walletValueTableCell = new WalletValueTableCell<>();
             walletValueTableCell.setShowPlusSign(true);
             walletValueTableCell.setTextColor(Color.WHITE, CustomColor.positiveValueColor, CustomColor.negativeValueColor);
             return walletValueTableCell;
@@ -170,7 +194,7 @@ public class ChangePageController {
             if (selectedFile != null) {
                 boolean successful = AccountData.getInstance().setReferenceData(selectedFile.getAbsolutePath());
                 if (successful) {
-                    AccountDataTaskRunner.getInstance().startTask(UpdateChangeTask.getInstance());
+                    AwaitableTaskRunner.getInstance().startTask(UpdateChangeTask.getInstance());
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.initOwner(mainPane.getScene().getWindow());
@@ -188,8 +212,40 @@ public class ChangePageController {
             ButtonType resultButtonType = result.get();
             if (resultButtonType == currentDataButtonType) {
                 AccountData.getInstance().setReferenceData();
-                AccountDataTaskRunner.getInstance().startTask(UpdateChangeTask.getInstance());
+                AwaitableTaskRunner.getInstance().startTask(UpdateChangeTask.getInstance());
             }
+        }
+    }
+
+    @FXML
+    private void handleItemValueChangeDetailsPressed() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/itemValueChangeDetails.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initOwner(mainPane.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Item Value Change Details");
+            stage.setScene(new Scene(root, (MainPageController.PAGE_WIDTH * 5) / 4, (MainPageController.PAGE_HEIGHT * 3) / 4));
+            stage.show();
+        } catch (IOException e) {
+            Log.warn("Exception while open item value change window", e);
+        }
+    }
+
+    @FXML
+    private void handleWalletValueChangeDetailsPressed() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/walletValueChangeDetails.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initOwner(mainPane.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Wallet Value Change Details");
+            stage.setScene(new Scene(root, (MainPageController.PAGE_WIDTH * 3) / 4, (MainPageController.PAGE_HEIGHT * 3) / 4));
+            stage.show();
+        } catch (IOException e) {
+            Log.warn("Exception while open item value change window", e);
         }
     }
 }

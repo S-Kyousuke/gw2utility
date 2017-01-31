@@ -21,7 +21,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import th.skyousuke.gw2utility.datamodel.AccountData;
-import th.skyousuke.gw2utility.util.task.AccountDataTaskRunner;
+import th.skyousuke.gw2utility.util.task.AwaitableTaskRunner;
 import th.skyousuke.gw2utility.util.task.UpdateBankTask;
 import th.skyousuke.gw2utility.util.task.UpdateBuyListTask;
 import th.skyousuke.gw2utility.util.task.UpdateChangeTask;
@@ -121,38 +121,38 @@ public class AccountDataAutoUpdater {
             referenceDataButton.setDisable(true);
         });
 
-        final AccountDataTaskRunner accountDataTaskRunner = AccountDataTaskRunner.getInstance();
-        accountDataTaskRunner.startTask(UpdateCharacterNamesTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateCharactersTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateBankTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateMaterialTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateWalletsTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateSellListTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateBuyListTask.getInstance());
-        accountDataTaskRunner.startTask(UpdateChangeTask.getInstance());
+        final AwaitableTaskRunner awaitableTaskRunner = AwaitableTaskRunner.getInstance();
+        awaitableTaskRunner.startTask(UpdateCharacterNamesTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateCharactersTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateBankTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateMaterialTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateWalletsTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateSellListTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateBuyListTask.getInstance());
+        awaitableTaskRunner.startTask(UpdateChangeTask.getInstance());
 
         executor.submit(() -> {
             setStatusText("Updating character name data...");
-            accountDataTaskRunner.awaitTask(UpdateCharacterNamesTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateCharacterNamesTask.getInstance());
             setStatusText("Updating character data...");
-            accountDataTaskRunner.awaitTask(UpdateCharactersTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateCharactersTask.getInstance());
             setStatusText("Updating bank data...");
-            accountDataTaskRunner.awaitTask(UpdateBankTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateBankTask.getInstance());
             setStatusText("Updating material data...");
-            accountDataTaskRunner.awaitTask(UpdateMaterialTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateMaterialTask.getInstance());
             setStatusText("Updating wallet data...");
-            accountDataTaskRunner.awaitTask(UpdateWalletsTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateWalletsTask.getInstance());
             setStatusText("Updating sell list data...");
-            accountDataTaskRunner.awaitTask(UpdateSellListTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateSellListTask.getInstance());
             setStatusText("Updating buy list data...");
-            accountDataTaskRunner.awaitTask(UpdateBuyListTask.getInstance());
+            awaitableTaskRunner.awaitTask(UpdateBuyListTask.getInstance());
 
             setStatusText("Updating change data...");
             if (AccountData.getInstance().isReferenceDataSet()) {
-                accountDataTaskRunner.awaitTask(UpdateChangeTask.getInstance());
+                awaitableTaskRunner.awaitTask(UpdateChangeTask.getInstance());
             } else {
                 AccountData.getInstance().setReferenceData();
-                accountDataTaskRunner.awaitTask(UpdateChangeTask.getInstance());
+                awaitableTaskRunner.awaitTask(UpdateChangeTask.getInstance());
             }
             setStatusText("Update Completed: " + DateTimeHelper.dateTimeFormatter.format(LocalDateTime.now()));
 

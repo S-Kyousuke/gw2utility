@@ -16,25 +16,43 @@
 
 package th.skyousuke.gw2utility.util;
 
+import com.esotericsoftware.minlog.Log;
 import th.skyousuke.gw2utility.datamodel.ItemContainer;
+import th.skyousuke.gw2utility.datamodel.ItemContainerValue;
 import th.skyousuke.gw2utility.datamodel.ItemSlot;
+import th.skyousuke.gw2utility.datamodel.ItemValue;
 import th.skyousuke.gw2utility.datamodel.Wallet;
+import th.skyousuke.gw2utility.datamodel.WalletValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ChangeCalculator {
 
     private Map<Integer, Integer> itemChangeMap = new HashMap<>();
     private Map<Integer, Integer> walletChangeMap = new HashMap<>();
 
-    public void cleanupItemChangeResult() {
+    private ItemValueCalculator itemValueCalculator = new ItemValueCalculator();
+    private WalletValueCalculator walletValueCalculator = new WalletValueCalculator();
+
+    public void startCalculateItemChange() {
+        itemChangeMap.clear();
+    }
+
+    public void startCalculateWalletChange() {
+        walletChangeMap.clear();
+    }
+
+    public void stopItemChange() {
         itemChangeMap.entrySet().removeIf(entry -> entry.getValue() == 0);
     }
 
-    public void cleanupWalletChangeResult() {
+    public void stopWalletChange() {
         walletChangeMap.entrySet().removeIf(entry -> entry.getValue() == 0);
     }
 
@@ -98,9 +116,33 @@ public class ChangeCalculator {
         return walletChange;
     }
 
-    // for reuse purpose
-    public void init() {
-        itemChangeMap.clear();
-        walletChangeMap.clear();
+    public List<ItemContainerValue> getItemValueChange(List<ItemSlot> itemChange) {
+        ExecutorService service = Executors.newCachedThreadPool();
+        List<ItemContainerValue> itemChangeValue = new ArrayList<>();
+        for (ItemSlot itemSlot : itemChange) {
+            service.submit(() -> {
+                ItemValue itemValue = itemValueCalculator.getItemValue(itemSlot.getItem());
+                itemChangeValue.add(new ItemContainerValue(itemValue, itemSlot.itemCountProperty()));
+            });
+        }
+        service.shutdown();
+        try {
+            if (!service.awaitTermination(5, TimeUnit.MINUTES)) {
+                Log.warn("Item value calculation failed!");
+                return new ArrayList<>();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Log.warn("Item value calculation is interrupted!");
+        }
+        return itemChangeValue;
+    }
+
+    public List<WalletValue> getWalletValueChange(List<Wallet> walletChange) {
+        List<WalletValue> walletChangeValue = new ArrayList<>();
+        for (Wallet wallet : walletChange) {
+            walletChangeValue.add(walletValueCalculator.getWalletValue(wallet));
+        }
+        return walletChangeValue;
     }
 }

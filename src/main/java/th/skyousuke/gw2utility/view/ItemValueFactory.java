@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package th.skyousuke.gw2utility.datamodel.property;
+package th.skyousuke.gw2utility.view;
 
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 import th.skyousuke.gw2utility.datamodel.Item;
+import th.skyousuke.gw2utility.datamodel.ItemContainer;
 
-public class ItemProperty extends SimpleObjectProperty<Item> {
+public class ItemValueFactory<T extends ItemContainer> implements Callback<TableColumn.CellDataFeatures<T, Item>, ObservableValue<Item>> {
 
-    public ItemProperty(Item item) {
-        set(item);
-        get().idProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
-        get().nameProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
-        get().rarityProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
-        get().iconPathProperty().addListener((observable, oldValue, newValue) -> fireValueChangedEvent());
+    @Override
+    public ObservableValue<Item> call(TableColumn.CellDataFeatures<T, Item> param) {
+        final Item item = param.getValue().getItem();
+        return Bindings.createObjectBinding(() -> item, item.nameProperty(), item.iconPathProperty());
     }
 }

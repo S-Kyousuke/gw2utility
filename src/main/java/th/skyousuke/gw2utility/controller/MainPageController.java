@@ -38,6 +38,9 @@ import java.util.Optional;
 
 public class MainPageController {
 
+    public static final int PAGE_WIDTH = 740;
+    public static final int PAGE_HEIGHT = 600;
+
     @FXML
     private Label welcomeLabel;
     @FXML
@@ -124,7 +127,7 @@ public class MainPageController {
 
     public void handleKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.F8) {
-                toggleDebugTab();
+            toggleDebugTab();
         }
     }
 

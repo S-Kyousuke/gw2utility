@@ -33,8 +33,8 @@ import java.util.concurrent.Future;
 
 public class Downloader {
 
-    private static final int CONNECTION_TIMEOUT_SECOND = 5;
-    private static final int READ_TIMEOUT_SECOND = 5;
+    private static final int CONNECTION_TIMEOUT_SECOND = 10;
+    private static final int READ_TIMEOUT_SECOND = 10;
 
     private static final int SECOND_TO_MILLISECOND = 1000;
 
@@ -75,7 +75,7 @@ public class Downloader {
      * @param destinationDirectory destination directory
      * @param downloadListener     download listener
      * @return downloaded          file path if the file has been downloaded successfully and null otherwise.
-     * @throws IOException         if an I/O exception occurs.
+     * @throws IOException if an I/O exception occurs.
      */
     public static String download(String fileURL, String destinationDirectory, DownloadListener downloadListener)
             throws IOException {
