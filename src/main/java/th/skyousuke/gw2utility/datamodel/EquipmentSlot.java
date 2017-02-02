@@ -18,14 +18,13 @@ package th.skyousuke.gw2utility.datamodel;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import th.skyousuke.gw2utility.datamodel.property.ItemProperty;
 
 public class EquipmentSlot implements ItemContainer {
     private SimpleObjectProperty<Item> item;
     private SimpleStringProperty slotType;
 
     public EquipmentSlot(int id, String slotType) {
-        this.item = new ItemProperty(ItemData.getInstance().getItem(id));
+        this.item = new SimpleObjectProperty<>(ItemData.getInstance().getItem(id));
         this.slotType = new SimpleStringProperty(slotType);
     }
 

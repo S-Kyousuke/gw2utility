@@ -27,7 +27,7 @@ public class Account {
     public Account(String id, String name, int worldId) {
         this.id = new SimpleStringProperty(id);
         this.name = new SimpleStringProperty(name);
-        this.worldId =  new SimpleIntegerProperty(worldId);
+        this.worldId = new SimpleIntegerProperty(worldId);
     }
 
     public String getId() {

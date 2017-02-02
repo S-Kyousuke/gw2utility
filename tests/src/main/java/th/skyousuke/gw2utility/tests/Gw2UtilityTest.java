@@ -17,33 +17,28 @@
 package th.skyousuke.gw2utility.tests;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import th.skyousuke.gw2utility.datamodel.CurrencyData;
+import th.skyousuke.gw2utility.datamodel.ItemData;
+import th.skyousuke.gw2utility.util.AccountDataAutoUpdater;
+import th.skyousuke.gw2utility.util.SettingsData;
+import th.skyousuke.gw2utility.util.task.AwaitableTaskRunner;
 
-import java.io.IOException;
-
-public class ItemTableViewTest extends Application {
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/itemTableViewTest.fxml"));
-        primaryStage.setScene(new Scene(root));
-        primaryStage.sizeToScene();
-        primaryStage.show();
-        primaryStage.centerOnScreen();
-    }
+public abstract class Gw2UtilityTest extends Application {
 
     @Override
     public void init() throws Exception {
+        SettingsData.getInstance().loadSettings();
+        ItemData.getInstance().loadData();
+        CurrencyData.getInstance().loadData();
     }
 
     @Override
     public void stop() throws Exception {
+        AwaitableTaskRunner.getInstance().stopUpdateService();
+        AccountDataAutoUpdater.getInstance().stopUpdateService();
+        ItemData.getInstance().stopUpdateService();
+        CurrencyData.getInstance().stopUpdateService();
+        SettingsData.getInstance().saveSettings();
     }
 
-    public static void main(String[] args) throws IOException {
-        launch(args);
-    }
 }

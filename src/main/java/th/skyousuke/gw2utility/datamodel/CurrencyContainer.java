@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package th.skyousuke.gw2utility.tests.controller;
+package th.skyousuke.gw2utility.datamodel;
 
-public class ItemTableViewTestController {
+public interface CurrencyContainer {
 
-    public void initialize() {
+    Currency getCurrency();
 
-    }
 }

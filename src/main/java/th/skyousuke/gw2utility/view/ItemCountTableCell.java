@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 
 public class ItemCountTableCell<T> extends TableCell<T, Integer> {
 
-    private boolean signedDisplay;
+    private boolean showPlusSign;
 
     private Color positiveValueColor = Color.WHITE;
     private Color negativeValueColor = Color.WHITE;
@@ -44,7 +44,7 @@ public class ItemCountTableCell<T> extends TableCell<T, Integer> {
             } else {
                 setTextFill(zeroValueColor);
             }
-            if (signedDisplay) {
+            if (showPlusSign) {
                 setText((value > 0 ? "+" : "") + value);
             } else {
                 setText(String.valueOf(value));
@@ -52,8 +52,8 @@ public class ItemCountTableCell<T> extends TableCell<T, Integer> {
         }
     }
 
-    public void setSignedDisplay(boolean signedDisplay) {
-        this.signedDisplay = signedDisplay;
+    public void setShowPlusSign(boolean showPlusSign) {
+        this.showPlusSign = showPlusSign;
     }
 
     public void setTextColor(Color zeroValueColor, Color positiveValueColor, Color negativeValueColor) {

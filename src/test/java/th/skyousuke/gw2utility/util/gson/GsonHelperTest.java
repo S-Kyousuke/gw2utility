@@ -127,9 +127,9 @@ public class GsonHelperTest {
     @Test
     public void writeItemDataToFile_SimpleItemData_ValidJsonFile() throws Exception {
         final Map<Integer, Item> items = new HashMap<>();
-        items.put(0, new Item(0, "Item Name 0", ItemRarity.BASIC, "Icon Path 0"));
-        items.put(1, new Item(1, "Item Name 1", ItemRarity.RARE, "Icon Path 1"));
-        items.put(2, new Item(2, "Item Name 2", ItemRarity.EXOTIC, "Icon Path 2"));
+        items.put(0, new Item(0, "Item Name 0", ItemRarity.BASIC, "Icon Path 0", false, false, 0));
+        items.put(1, new Item(1, "Item Name 1", ItemRarity.RARE, "Icon Path 1", false, false, 0));
+        items.put(2, new Item(2, "Item Name 2", ItemRarity.EXOTIC, "Icon Path 2", false, false, 0));
 
         Assert.assertTrue(GsonHelper.writeItemDataToFile(items, JSON_TEST_FILE_PATH));
         final Map<Integer, Item> readItems = GsonHelper.readItemDataFromFile(JSON_TEST_FILE_PATH);

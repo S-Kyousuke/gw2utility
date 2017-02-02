@@ -18,7 +18,7 @@ package th.skyousuke.gw2utility.util.task;
 
 import java.util.concurrent.CountDownLatch;
 
-public interface AccountDataTask {
+public interface AwaitableTask {
 
     void runTask(CountDownLatch finishedSignal);
 

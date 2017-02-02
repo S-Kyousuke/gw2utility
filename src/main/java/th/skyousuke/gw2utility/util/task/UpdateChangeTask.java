@@ -27,9 +27,11 @@ import th.skyousuke.gw2utility.util.Gw2Api;
 
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateChangeTask implements AccountDataTask {
+public class UpdateChangeTask implements AwaitableTask {
 
-    public static final UpdateChangeTask instance = new UpdateChangeTask();
+    private static final UpdateChangeTask instance = new UpdateChangeTask();
+
+    private ChangeCalculator changeCalculator = new ChangeCalculator();
 
     private UpdateChangeTask() {
     }
@@ -40,19 +42,28 @@ public class UpdateChangeTask implements AccountDataTask {
 
     @Override
     public void runTask(CountDownLatch finishedSignal) {
-        // make sure all data is synchronized
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateCharacterNamesTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateCharactersTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateBankTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateMaterialTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateWalletsTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateSellListTask.getInstance());
-        AccountDataTaskRunner.getInstance().awaitTask(UpdateBuyListTask.getInstance());
+        awaitSynchronizedData();
 
-        ChangeCalculator changeCalculator = new ChangeCalculator();
-        AccountData accountData = AccountData.getInstance();
+        updateItemChange(AccountData.getInstance());
+        updateWalletChange(AccountData.getInstance());
+        updateValueChange(AccountData.getInstance());
 
-        /* calculate and update item change */
+        finishedSignal.countDown();
+    }
+
+    private void awaitSynchronizedData() {
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateCharacterNamesTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateCharactersTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateBankTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateMaterialTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateWalletsTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateSellListTask.getInstance());
+        AwaitableTaskRunner.getInstance().awaitTask(UpdateBuyListTask.getInstance());
+    }
+
+    private void updateItemChange(AccountData accountData) {
+        changeCalculator.startCalculateItemChange();
+
         // currentItems
         for (Character character : accountData.getCharacters().values()) {
             changeCalculator.addCurrentItems(character.getEquipment().getEquipmentSlots());
@@ -78,11 +89,14 @@ public class UpdateChangeTask implements AccountDataTask {
             changeCalculator.addPreviousItem(new ItemSlot(sellTransaction.getItemId(), sellTransaction.getQuantity()));
         }
         // update item change result
-        changeCalculator.cleanupItemChangeResult();
+        changeCalculator.stopItemChange();
         accountData.getItemChange().clear();
         accountData.getItemChange().addAll(changeCalculator.getItemChange());
+    }
 
-        /* calculate and update wallet change */
+    private void updateWalletChange(AccountData accountData) {
+        changeCalculator.startCalculateWalletChange();
+
         // current wallet
         changeCalculator.addCurrentWallets(accountData.getWallets());
         for (Transaction buyTransaction : accountData.getBuyTransactions()) {
@@ -94,10 +108,16 @@ public class UpdateChangeTask implements AccountDataTask {
             changeCalculator.addPreviousWallet(new Wallet(Gw2Api.COIN_ID, buyTransaction.getPrice() * buyTransaction.getQuantity()));
         }
         // update wallet change result
-        changeCalculator.cleanupWalletChangeResult();
+        changeCalculator.stopWalletChange();
         accountData.getWalletChange().clear();
         accountData.getWalletChange().addAll(changeCalculator.getWalletChange());
+    }
 
-        finishedSignal.countDown();
+    private void updateValueChange(AccountData accountData) {
+        accountData.getItemValueChange().clear();
+        accountData.getWalletValueChange().clear();
+
+        accountData.getItemValueChange().addAll(changeCalculator.getItemValueChange(accountData.getItemChange()));
+        accountData.getWalletValueChange().addAll(changeCalculator.getWalletValueChange(accountData.getWalletChange()));
     }
 }

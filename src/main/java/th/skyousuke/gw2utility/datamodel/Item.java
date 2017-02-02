@@ -16,11 +16,13 @@
 
 package th.skyousuke.gw2utility.datamodel;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class Item {
 
@@ -28,12 +30,20 @@ public class Item {
     private SimpleStringProperty name;
     private SimpleObjectProperty<ItemRarity> rarity;
     private SimpleStringProperty iconPath;
+    private SimpleBooleanProperty boundOnAcquire;
+    private SimpleBooleanProperty noSell;
+    private SimpleIntegerProperty vendorPrice;
 
-    public Item(int id, String name, ItemRarity rarity, String iconPath) {
+    private CountDownLatch waitDataSignal;
+
+    public Item(int id, String name, ItemRarity rarity, String iconPath, boolean boundOnAcquire, boolean noSell, int vendorPrice) {
         this.id = new SimpleIntegerProperty(id);
-        this.name =  new SimpleStringProperty(name);
+        this.name = new SimpleStringProperty(name);
         this.rarity = new SimpleObjectProperty<>(rarity);
         this.iconPath = new SimpleStringProperty(iconPath);
+        this.boundOnAcquire = new SimpleBooleanProperty(boundOnAcquire);
+        this.noSell = new SimpleBooleanProperty(noSell);
+        this.vendorPrice = new SimpleIntegerProperty(vendorPrice);
     }
 
     public int getId() {
@@ -84,6 +94,58 @@ public class Item {
         this.iconPath.set(iconPath);
     }
 
+    public boolean isBoundOnAcquire() {
+        return boundOnAcquire.get();
+    }
+
+    public SimpleBooleanProperty boundOnAcquireProperty() {
+        return boundOnAcquire;
+    }
+
+    public void setBoundOnAcquire(boolean boundOnAcquire) {
+        this.boundOnAcquire.set(boundOnAcquire);
+    }
+
+    public boolean isNoSell() {
+        return noSell.get();
+    }
+
+    public SimpleBooleanProperty noSellProperty() {
+        return noSell;
+    }
+
+    public void setNoSell(boolean noSell) {
+        this.noSell.set(noSell);
+    }
+
+    public int getVendorPrice() {
+        return vendorPrice.get();
+    }
+
+    public SimpleIntegerProperty vendorPriceProperty() {
+        return vendorPrice;
+    }
+
+    public void setVendorPrice(int vendorPrice) {
+        this.vendorPrice.set(vendorPrice);
+    }
+
+    public void waitData() throws InterruptedException {
+        if (waitDataSignal != null)
+            waitDataSignal.await();
+    }
+
+    public void onDataComplete() {
+        waitDataSignal.countDown();
+    }
+
+    public void resetWaitData() {
+        if (waitDataSignal != null && waitDataSignal.getCount() == 1) {
+            waitDataSignal.countDown();
+        }
+        waitDataSignal = new CountDownLatch(1);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -91,26 +153,24 @@ public class Item {
         if (o == null || getClass() != o.getClass())
             return false;
         Item item = (Item) o;
-        return Objects.equals(id.get(), item.id.get()) &&
-                Objects.equals(name.get(), item.name.get()) &&
-                Objects.equals(rarity.get(), item.rarity.get()) &&
-                Objects.equals(iconPath.get(), item.iconPath.get());
+        return Objects.equals(id.get(), item.id.get());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id.get(), name.get(), rarity.get(), iconPath.get());
+        return Objects.hash(id.get());
     }
 
     @Override
     public String toString() {
         return "Item{" +
-                "id=" + id.get() +
-                ", name='" + name.get() + '\'' +
-                ", rarity=" + rarity.get() +
-                ", iconPath='" + iconPath.get() + '\'' +
+                "id=" + id +
+                ", name=" + name +
+                ", rarity=" + rarity +
+                ", iconPath=" + iconPath +
+                ", boundOnAcquire=" + boundOnAcquire +
+                ", noSell=" + noSell +
+                ", vendorPrice=" + vendorPrice +
                 '}';
     }
-
-
 }

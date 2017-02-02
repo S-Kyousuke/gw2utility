@@ -21,7 +21,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.paint.Color;
 import th.skyousuke.gw2utility.datamodel.Wallet;
 
-public class WalletValueTableCell extends TableCell<Wallet, Wallet> {
+public class WalletValueTableCell<T> extends TableCell<T, Wallet> {
 
     private boolean showPlusSign;
 
@@ -76,6 +76,7 @@ public class WalletValueTableCell extends TableCell<Wallet, Wallet> {
 
     /**
      * Set wallet value text color using CSS
+     *
      * @param color value text color
      */
     private void setWalletValueColor(Color color) {

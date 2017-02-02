@@ -21,7 +21,6 @@ import com.esotericsoftware.minlog.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import th.skyousuke.gw2utility.datamodel.AccountData;
@@ -32,7 +31,6 @@ import th.skyousuke.gw2utility.util.FileHelper;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
@@ -41,8 +39,8 @@ import java.util.Map;
 public class GsonHelper {
 
     // @formatter:off
-    public static final Type itemDataType = new TypeToken<Map<Integer, Item>>() {}.getType();
-    public static final Type currencyDataType = new TypeToken<Map<Integer, Currency>>() {}.getType();
+    private static final Type itemDataType = new TypeToken<Map<Integer, Item>>() {}.getType();
+    private static final Type currencyDataType = new TypeToken<Map<Integer, Currency>>() {}.getType();
     // @formatter:on
 
     public static final Gson gson = new GsonBuilder()
@@ -54,6 +52,8 @@ public class GsonHelper {
             .setPrettyPrinting().create();
 
     public static final JsonParser jsonParser = new JsonParser();
+
+    private static final String READING_WARNING_MESSAGE = "Exception while reading json file: ";
 
     private GsonHelper() {
     }
@@ -86,8 +86,8 @@ public class GsonHelper {
             else
                 gson.toJson(object, writer);
             return true;
-        } catch (IOException e) {
-            Log.warn("Exception while saving json data: " + filePath + System.lineSeparator() + object, e);
+        } catch (Exception e) {
+            Log.warn("Exception while writing json data: " + filePath + System.lineSeparator() + object, e);
             return false;
         }
     }
@@ -100,8 +100,8 @@ public class GsonHelper {
         try (Reader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             return GsonHelper.jsonParser.parse(bufferedReader).getAsJsonObject();
-        } catch (IOException | JsonParseException e) {
-            Log.warn("Exception while reading json file: " + filePath, e);
+        } catch (Exception e) {
+            Log.warn(READING_WARNING_MESSAGE + filePath, e);
             return null;
         }
     }
@@ -122,8 +122,8 @@ public class GsonHelper {
         try (Reader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             return GsonHelper.gson.fromJson(bufferedReader, classOfT);
-        } catch (IOException | JsonParseException e) {
-            Log.warn("Exception while reading json file: " + filePath, e);
+        } catch (Exception e) {
+            Log.warn(READING_WARNING_MESSAGE + filePath, e);
             return null;
         }
     }
@@ -144,8 +144,8 @@ public class GsonHelper {
         try (Reader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             return GsonHelper.gson.fromJson(bufferedReader, typeOfT);
-        } catch (IOException | JsonParseException e) {
-            Log.warn("Exception while reading json file: " + filePath, e);
+        } catch (Exception e) {
+            Log.warn(READING_WARNING_MESSAGE + filePath, e);
             return null;
         }
     }

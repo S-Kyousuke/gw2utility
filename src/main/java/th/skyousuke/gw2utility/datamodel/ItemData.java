@@ -42,7 +42,7 @@ public class ItemData {
     private static final ItemData instance = new ItemData();
 
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 
     private ObservableMap<Integer, Item> items = FXCollections.observableHashMap();
 
@@ -61,9 +61,9 @@ public class ItemData {
         Item itemInDatabase = items.get(id);
         if (isCorrectItem(itemInDatabase)) {
             return itemInDatabase;
-        }
-        else {
-            Item item = new Item(id, "Loading...", ItemRarity.BASIC, "");
+        } else {
+            Item item = new Item(id, "Loading...", ItemRarity.BASIC, "", false, false, 0);
+            item.resetWaitData();
             downloadItemInfo(item);
             items.put(id, item);
             return item;
@@ -80,22 +80,38 @@ public class ItemData {
             @Override
             public void run() {
                 Item downloadedItem = Gw2Api.getInstance().getItem(item.getId());
-                if (downloadedItem != null) {
-                    item.setName(downloadedItem.getName());
-                    item.setRarity(downloadedItem.getRarity());
-                    final String iconURL = downloadedItem.getIconPath();
-                    try {
-                        final String iconPath = Downloader.download(iconURL, IMAGE_DIR, null);
-                        item.setIconPath(iconPath);
-                        saveData();
-                        return;
-                    } catch (IOException e) {
-                        Log.warn("Exception while downloading item icon", e);
-                    }
+                if (downloadedItem != null && setItemInfo(downloadedItem, item)) {
+                    return;
                 }
                 scheduler.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
+    }
+
+    private boolean setItemInfo(Item downloadedItem, Item item) {
+        item.setName(downloadedItem.getName());
+        item.setRarity(downloadedItem.getRarity());
+        item.setVendorPrice(downloadedItem.getVendorPrice());
+        item.setBoundOnAcquire(downloadedItem.isBoundOnAcquire());
+        item.setNoSell(downloadedItem.isNoSell());
+
+        final String iconPath = downloadItemIcon(downloadedItem.getIconPath());
+        if (iconPath != null) {
+            item.setIconPath(iconPath);
+            item.onDataComplete();
+            saveData();
+            return true;
+        }
+        return false;
+    }
+
+    private String downloadItemIcon(String url) {
+        try {
+            return Downloader.download(url, IMAGE_DIR, null);
+        } catch (IOException e) {
+            Log.warn("Exception while downloading item icon", e);
+            return null;
+        }
     }
 
     private void saveData() {

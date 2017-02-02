@@ -31,6 +31,7 @@ import th.skyousuke.gw2utility.datamodel.TransactionListing;
 import th.skyousuke.gw2utility.util.JavaFXControlUtils;
 import th.skyousuke.gw2utility.view.ItemCountTableCell;
 import th.skyousuke.gw2utility.view.ItemNameTableCell;
+import th.skyousuke.gw2utility.view.ItemValueFactory;
 import th.skyousuke.gw2utility.view.ListingAgeTableCell;
 import th.skyousuke.gw2utility.view.PriceInCoinTableCell;
 
@@ -46,7 +47,6 @@ public class TradingPostPageController {
     private TableView<TransactionListing> buyListTableView;
 
     private ObservableList<TransactionListing> sellListings;
-
     private ObservableList<TransactionListing> buyListings;
 
     public void initialize() {
@@ -114,7 +114,7 @@ public class TradingPostPageController {
         countColumn.setCellFactory(param -> new ItemCountTableCell<>());
 
         TableColumn<TransactionListing, Item> nameColumn = (TableColumn<TransactionListing, Item>) sellListTableView.getColumns().get(1);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("item"));
+        nameColumn.setCellValueFactory(new ItemValueFactory<>());
         nameColumn.setCellFactory(param -> new ItemNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Item::getName));
 
@@ -140,7 +140,7 @@ public class TradingPostPageController {
         countColumn.setCellFactory(param -> new ItemCountTableCell<>());
 
         TableColumn<TransactionListing, Item> nameColumn = (TableColumn<TransactionListing, Item>) buyListTableView.getColumns().get(1);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("item"));
+        nameColumn.setCellValueFactory(new ItemValueFactory<>());
         nameColumn.setCellFactory(param -> new ItemNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Item::getName));
 

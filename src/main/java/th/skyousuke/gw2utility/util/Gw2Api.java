@@ -171,7 +171,25 @@ public class Gw2Api {
             final String name = itemInJson.getAsJsonPrimitive("name").getAsString();
             final ItemRarity rarity = ItemRarity.fromString(itemInJson.getAsJsonPrimitive("rarity").getAsString());
             final String imagePath = itemInJson.getAsJsonPrimitive("icon").getAsString();
-            return new Item(id, name, rarity, imagePath);
+            final int vendorPrice = itemInJson.getAsJsonPrimitive("vendor_value").getAsInt();
+
+            boolean noSell = false;
+            boolean boundOnAcquire = false;
+            final JsonArray flags = itemInJson.getAsJsonArray("flags");
+            for (int i = 0; i < flags.size(); i++) {
+                String flag = flags.get(i).getAsString();
+                switch (flag) {
+                    case "NoSell":
+                        noSell = true;
+                        break;
+                    case "AccountBound":
+                    case "SoulbindOnAcquire":
+                        boundOnAcquire = true;
+                        break;
+                    default:
+                }
+            }
+            return new Item(id, name, rarity, imagePath, boundOnAcquire, noSell, vendorPrice);
         } catch (IOException e) {
             Log.warn("Exception while get item: " + id, e);
             return null;
@@ -221,7 +239,7 @@ public class Gw2Api {
     public Map<String, Character> getCharacters(String apiKey) {
         try {
             final String charactersJson = readJsonFromUrl(CHARACTER_API_URL, apiKey, "&page=0");
-            final JsonArray charactersJsonArray =  GsonHelper.jsonParser.parse(charactersJson).getAsJsonArray();
+            final JsonArray charactersJsonArray = GsonHelper.jsonParser.parse(charactersJson).getAsJsonArray();
             final Map<String, Character> characters = new HashMap<>();
             for (int i = 0; i < charactersJsonArray.size(); i++) {
                 JsonObject characterJson = charactersJsonArray.get(i).getAsJsonObject();
@@ -416,7 +434,7 @@ public class Gw2Api {
             JsonObject pricesInJson = GsonHelper.jsonParser.parse(pricesJson).getAsJsonObject();
             return pricesInJson.get("sells").getAsJsonObject().get("unit_price").getAsInt();
         } catch (IOException e) {
-            Log.error("Exception while get item sell price", e);
+            Log.warn("Exception while get item sell price", e);
             return 0;
         }
     }
@@ -435,5 +453,4 @@ public class Gw2Api {
     public ObservableSet<Integer> getCurrencyIdSet() {
         return currencyIdSet;
     }
-
 }

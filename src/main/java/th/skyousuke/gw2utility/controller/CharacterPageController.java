@@ -36,6 +36,7 @@ import th.skyousuke.gw2utility.datamodel.ItemSlot;
 import th.skyousuke.gw2utility.util.JavaFXControlUtils;
 import th.skyousuke.gw2utility.view.ItemCountTableCell;
 import th.skyousuke.gw2utility.view.ItemNameTableCell;
+import th.skyousuke.gw2utility.view.ItemValueFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -84,7 +85,7 @@ public class CharacterPageController {
         countColumn.setCellFactory(param -> new ItemCountTableCell<>());
 
         TableColumn<ItemSlot, Item> nameColumn = (TableColumn<ItemSlot, Item>) inventoryTableView.getColumns().get(1);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("item"));
+        nameColumn.setCellValueFactory(new ItemValueFactory<>());
         nameColumn.setCellFactory(param -> new ItemNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Item::getName));
     }
@@ -95,7 +96,7 @@ public class CharacterPageController {
         equipmentTableView.setItems(characterEquipmentList);
 
         TableColumn<EquipmentSlot, Item> nameColumn = (TableColumn<EquipmentSlot, Item>) equipmentTableView.getColumns().get(0);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("item"));
+        nameColumn.setCellValueFactory(new ItemValueFactory<>());
         nameColumn.setCellFactory(param -> new ItemNameTableCell<>());
         nameColumn.setComparator(Comparator.comparing(Item::getName));
 

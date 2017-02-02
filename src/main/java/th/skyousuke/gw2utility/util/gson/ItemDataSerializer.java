@@ -39,6 +39,9 @@ public class ItemDataSerializer implements JsonSerializer<Map<Integer, Item>> {
                 itemInJson.addProperty("name", item.getName());
                 itemInJson.addProperty("rarity", String.valueOf(item.getRarity()));
                 itemInJson.addProperty("iconPath", String.valueOf(item.getIconPath()));
+                itemInJson.addProperty("boundOnAcquire", item.isBoundOnAcquire());
+                itemInJson.addProperty("noSell", item.isNoSell());
+                itemInJson.addProperty("vendorPrice", item.getVendorPrice());
                 final String itemId = String.valueOf(entry.getKey());
                 itemsJson.add(itemId, itemInJson);
             }

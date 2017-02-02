@@ -23,7 +23,7 @@ import th.skyousuke.gw2utility.util.Gw2Api;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class UpdateMaterialTask implements AccountDataTask {
+public class UpdateMaterialTask implements AwaitableTask {
 
     private static final UpdateMaterialTask instance = new UpdateMaterialTask();
 

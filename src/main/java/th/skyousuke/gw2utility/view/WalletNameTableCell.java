@@ -21,10 +21,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import th.skyousuke.gw2utility.datamodel.Currency;
-import th.skyousuke.gw2utility.datamodel.Wallet;
 
 
-public class WalletNameTableCell  extends TableCell<Wallet, Currency>  {
+public class WalletNameTableCell<T> extends TableCell<T, Currency> {
 
     private static final int ICON_SIZE = 16;
 
