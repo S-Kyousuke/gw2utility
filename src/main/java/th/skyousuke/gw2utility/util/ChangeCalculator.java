@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -135,6 +136,7 @@ public class ChangeCalculator {
             Thread.currentThread().interrupt();
             Log.warn("Item value calculation is interrupted!");
         }
+        itemChangeValue.removeIf(Objects::isNull);
         return itemChangeValue;
     }
 
