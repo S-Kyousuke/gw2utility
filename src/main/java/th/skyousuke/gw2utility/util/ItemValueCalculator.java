@@ -28,13 +28,14 @@ public class ItemValueCalculator {
             Thread.currentThread().interrupt();
         }
         int tpPrice = 0;
+        int vendorPrice = item.getVendorPrice();
         if (!item.isBoundOnAcquire()) {
             tpPrice = CacheService.getItemSellPrice(item.getId());
         }
         if (tpPrice != 0) {
-            return new ItemValue(item, tpPrice, true);
+            return new ItemValue(item, Math.max(tpPrice, vendorPrice), true);
         } else if (!item.isNoSell()) {
-            return new ItemValue(item, item.getVendorPrice(), false);
+            return new ItemValue(item, vendorPrice, false);
         }
         return new ItemValue(item, 0, false);
     }

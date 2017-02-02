@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class UpdateChangeTask implements AwaitableTask {
 
-    public static final UpdateChangeTask instance = new UpdateChangeTask();
+    private static final UpdateChangeTask instance = new UpdateChangeTask();
 
     private ChangeCalculator changeCalculator = new ChangeCalculator();
 
