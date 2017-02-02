@@ -39,8 +39,8 @@ import java.util.Map;
 public class GsonHelper {
 
     // @formatter:off
-    private static final Type itemDataType = new TypeToken<Map<Integer, Item>>() {}.getType();
-    private static final Type currencyDataType = new TypeToken<Map<Integer, Currency>>() {}.getType();
+    public static final Type itemDataType = new TypeToken<Map<Integer, Item>>() {}.getType();
+    public static final Type currencyDataType = new TypeToken<Map<Integer, Currency>>() {}.getType();
     // @formatter:on
 
     public static final Gson gson = new GsonBuilder()
