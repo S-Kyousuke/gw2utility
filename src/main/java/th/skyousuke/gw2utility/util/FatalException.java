@@ -16,25 +16,13 @@
 
 package th.skyousuke.gw2utility.util;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+public class FatalException extends RuntimeException {
 
-public class FileHelper {
-
-    private static final Path currentAbsolutePath = Paths.get("").toAbsolutePath();
-
-    private FileHelper() {
+    public FatalException(String message) {
+        super(message);
     }
 
-    public static boolean exists(String filePath) {
-        return filePath != null && Paths.get(filePath).toFile().exists();
-    }
-
-    public static String getRelativePath(String path) {
-        return currentAbsolutePath.relativize(Paths.get(path)).toString();
-    }
-
-    public static String getAbsolutePath(String relativePath) {
-        return Paths.get(relativePath).toAbsolutePath().toString();
+    public FatalException(Throwable cause) {
+        super(cause);
     }
 }

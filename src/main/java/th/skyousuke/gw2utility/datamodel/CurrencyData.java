@@ -41,7 +41,7 @@ public class CurrencyData {
     private static final CurrencyData instance = new CurrencyData();
 
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(1);
 
     private final ObservableMap<Integer, Currency> currencies = FXCollections.observableHashMap();
 
@@ -82,14 +82,14 @@ public class CurrencyData {
                         return;
                     }
                 }
-                scheduler.schedule(this, 5, TimeUnit.SECONDS);
+                scheduledExecutor.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
     }
 
     private String downloadCurrencyIcon(String url) {
         try {
-            return Downloader.download(url, IMAGE_DIR, null);
+            return Downloader.download(url, IMAGE_DIR, null, false);
         } catch (IOException e) {
             Log.warn("Exception while downloading currency icon", e);
             return null;
@@ -117,6 +117,6 @@ public class CurrencyData {
 
     public void stopUpdateService() {
         executor.shutdown();
-        scheduler.shutdown();
+        scheduledExecutor.shutdown();
     }
 }

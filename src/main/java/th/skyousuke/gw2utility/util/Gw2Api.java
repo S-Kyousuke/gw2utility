@@ -453,4 +453,14 @@ public class Gw2Api {
     public ObservableSet<Integer> getCurrencyIdSet() {
         return currencyIdSet;
     }
+
+    public int[] getItemIdArray() {
+        try {
+            String itemIdJson = readJsonFromUrl(ITEM_API_URL);
+            return GsonHelper.gson.fromJson(itemIdJson, int[].class);
+        } catch (IOException e) {
+            Log.error("Exception while get item id array", e);
+            return new int[0];
+        }
+    }
 }
