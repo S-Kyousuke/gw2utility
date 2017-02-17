@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package th.skyousuke.gw2utility.util;
+package th.skyousuke.gw2utility.database;
 
 import com.esotericsoftware.minlog.Log;
 import th.skyousuke.gw2utility.datamodel.Item;
 import th.skyousuke.gw2utility.datamodel.ItemData;
+import th.skyousuke.gw2utility.util.Gw2Api;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

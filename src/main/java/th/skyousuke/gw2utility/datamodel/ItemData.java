@@ -83,10 +83,9 @@ public class ItemData {
             @Override
             public void run() {
                 Item downloadedItem = Gw2Api.getInstance().getItem(item.getId());
-                if (downloadedItem != null && setItemInfo(downloadedItem, item)) {
-                    return;
+                if (downloadedItem == null || !setItemInfo(downloadedItem, item)) {
+                    scheduledExecutor.schedule(this, 5, TimeUnit.SECONDS);
                 }
-                scheduledExecutor.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
     }
@@ -104,6 +103,7 @@ public class ItemData {
         if (!FileHelper.exists(iconPath)) {
             iconPath = downloadItemIcon(iconURL);
         }
+
         if (iconPath != null) {
             item.setIconPath(iconPath);
             item.onDataComplete();
@@ -143,10 +143,6 @@ public class ItemData {
     public void stopUpdateService() {
         executor.shutdown();
         scheduledExecutor.shutdown();
-    }
-
-    public boolean isAutoSave() {
-        return autoSave;
     }
 
     public void setAutoSave(boolean autoSave) {
