@@ -136,7 +136,8 @@ public class Item {
     }
 
     public void onDataComplete() {
-        waitDataSignal.countDown();
+        if (waitDataSignal != null)
+            waitDataSignal.countDown();
     }
 
     public void resetWaitData() {

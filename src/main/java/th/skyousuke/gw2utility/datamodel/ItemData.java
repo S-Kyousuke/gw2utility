@@ -19,12 +19,13 @@ package th.skyousuke.gw2utility.datamodel;
 import com.esotericsoftware.minlog.Log;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import org.apache.commons.io.FilenameUtils;
 import th.skyousuke.gw2utility.util.Downloader;
 import th.skyousuke.gw2utility.util.FileHelper;
 import th.skyousuke.gw2utility.util.Gw2Api;
 import th.skyousuke.gw2utility.util.gson.GsonHelper;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,8 +42,10 @@ public class ItemData {
 
     private static final ItemData instance = new ItemData();
 
+    private boolean autoSave = true;
+
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(2);
 
     private ObservableMap<Integer, Item> items = FXCollections.observableHashMap();
 
@@ -80,10 +83,9 @@ public class ItemData {
             @Override
             public void run() {
                 Item downloadedItem = Gw2Api.getInstance().getItem(item.getId());
-                if (downloadedItem != null && setItemInfo(downloadedItem, item)) {
-                    return;
+                if (downloadedItem == null || !setItemInfo(downloadedItem, item)) {
+                    scheduledExecutor.schedule(this, 5, TimeUnit.SECONDS);
                 }
-                scheduler.schedule(this, 5, TimeUnit.SECONDS);
             }
         });
     }
@@ -95,28 +97,38 @@ public class ItemData {
         item.setBoundOnAcquire(downloadedItem.isBoundOnAcquire());
         item.setNoSell(downloadedItem.isNoSell());
 
-        final String iconPath = downloadItemIcon(downloadedItem.getIconPath());
+        String iconURL = downloadedItem.getIconPath();
+        String iconName = FilenameUtils.getName(iconURL);
+        String iconPath = IMAGE_DIR + File.separator + iconName;
+        if (!FileHelper.exists(iconPath)) {
+            iconPath = downloadItemIcon(iconURL);
+        }
+
         if (iconPath != null) {
             item.setIconPath(iconPath);
             item.onDataComplete();
-            saveData();
+            if (autoSave)
+                saveData();
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     private String downloadItemIcon(String url) {
         try {
-            return Downloader.download(url, IMAGE_DIR, null);
-        } catch (IOException e) {
+            return Downloader.download(url, IMAGE_DIR, null, false);
+        } catch (Exception e) {
             Log.warn("Exception while downloading item icon", e);
             return null;
         }
     }
 
-    private void saveData() {
-        if (!GsonHelper.writeItemDataToFile(items, DATA_FILE)) {
-            Log.error("Couldn't save item data!");
+    public void saveData() {
+        synchronized (this) {
+            if (!GsonHelper.writeItemDataToFile(items, DATA_FILE)) {
+                Log.error("Couldn't save item data!");
+            }
         }
     }
 
@@ -130,6 +142,18 @@ public class ItemData {
 
     public void stopUpdateService() {
         executor.shutdown();
-        scheduler.shutdown();
+        scheduledExecutor.shutdown();
+    }
+
+    public void setAutoSave(boolean autoSave) {
+        this.autoSave = autoSave;
+    }
+
+    public void setExecutor(ExecutorService executor) {
+        this.executor = executor;
+    }
+
+    public void setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {
+        this.scheduledExecutor = scheduledExecutor;
     }
 }

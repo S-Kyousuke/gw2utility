@@ -47,14 +47,14 @@ public class Downloader {
      * Quietly download file from an HTTP URL in the background. Cancel download task if timeout.
      *
      * @return download task
-     * @see Downloader#download(String, String, DownloadListener)
+     * @see Downloader#download(String, String, DownloadListener, boolean)
      */
-    public static Future<Void> startDownloadTask(String fileURL, String destinationDirectory, DownloadListener downloadListener) {
+    public static Future<Void> startDownloadTask(String fileURL, String destinationDirectory, DownloadListener downloadListener, boolean absolutePath) {
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         final Future<Void> future = executor.submit(() -> {
             String filePath = null;
             try {
-                filePath = download(fileURL, destinationDirectory, downloadListener);
+                filePath = download(fileURL, destinationDirectory, downloadListener, absolutePath);
             } catch (Exception e) {
                 Log.warn("Exception while download file " +
                         fileURL + " to " + destinationDirectory, e);
@@ -74,10 +74,11 @@ public class Downloader {
      * @param fileURL              file URL to download
      * @param destinationDirectory destination directory
      * @param downloadListener     download listener
+     * @param absolutePath         if true, this method return the absolute path. if false, it return instead the relative path.
      * @return downloaded          file path if the file has been downloaded successfully and null otherwise.
      * @throws IOException if an I/O exception occurs.
      */
-    public static String download(String fileURL, String destinationDirectory, DownloadListener downloadListener)
+    public static String download(String fileURL, String destinationDirectory, DownloadListener downloadListener, boolean absolutePath)
             throws IOException {
         URL url = new URL(fileURL);
 
@@ -122,7 +123,8 @@ public class Downloader {
 
         // Return file path if the downloaded the file size is correct, otherwise delete the corrupted file and return null
         if (downloadedFileSize == completeFileSize) {
-            return outputFile.getAbsolutePath();
+            final String absoluteFilePath = outputFile.getAbsolutePath();
+            return absolutePath ? absoluteFilePath : FileHelper.getRelativePath(absoluteFilePath);
         } else {
             FileUtils.deleteQuietly(outputFile);
             return null;

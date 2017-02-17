@@ -45,7 +45,7 @@ public class DownloaderTest {
                 Assert.assertNotNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener, true);
         future.get();
     }
 
@@ -58,7 +58,7 @@ public class DownloaderTest {
                 Assert.assertNotNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener, true);
         future.get();
     }
 
@@ -71,7 +71,7 @@ public class DownloaderTest {
                 Assert.assertNotNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, System.getProperty("java.io.tmpdir"), downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, System.getProperty("java.io.tmpdir"), downloadListener, true);
         future.get();
     }
 
@@ -84,7 +84,7 @@ public class DownloaderTest {
                 Assert.assertNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener, true);
         future.get();
     }
 
@@ -97,7 +97,7 @@ public class DownloaderTest {
                 Assert.assertNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener, true);
         future.get();
     }
 
@@ -110,7 +110,7 @@ public class DownloaderTest {
                 Assert.assertNull(downloadedFilePath);
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, "//Wrong Directory", downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, "//Wrong Directory", downloadListener, true);
         future.get();
     }
 
@@ -133,7 +133,7 @@ public class DownloaderTest {
                 }
             }
         };
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener);
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, downloadListener, true);
         interruptSignal.await();
         future.cancel(true);
         completeSignal.await();
@@ -142,7 +142,7 @@ public class DownloaderTest {
     @Test
     public void startDownloadTask_EmptyDownloadListener_NullDownloadedFilePath() throws Exception {
         final String DOWNLOAD_FILE_TEST_URL = "http://speedtest.ftp.otenet.gr/files/test100k.db";
-        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, new DownloadAdapter());
+        Future<Void> future = Downloader.startDownloadTask(DOWNLOAD_FILE_TEST_URL, DOWNLOAD_TEST_DIRECTORY, new DownloadAdapter(), true);
         future.get();
     }
 

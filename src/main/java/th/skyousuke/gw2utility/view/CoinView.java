@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import th.skyousuke.gw2utility.util.FatalException;
 
 import java.io.IOException;
 
@@ -46,7 +47,7 @@ public class CoinView extends HBox {
         try {
             fxmlLoader.load();
         } catch (IOException exception) {
-            throw new RuntimeException(exception);
+            throw new FatalException(exception);
         }
 
         goldLabel.managedProperty().bind(goldLabel.visibleProperty());

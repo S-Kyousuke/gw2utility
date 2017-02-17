@@ -20,12 +20,15 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class Currency {
 
     private SimpleIntegerProperty id;
     private SimpleStringProperty name;
     private SimpleStringProperty iconPath;
+
+    private CountDownLatch waitDataSignal;
 
     public Currency(int id, String name, String iconPath) {
         this.id = new SimpleIntegerProperty(id);
@@ -67,6 +70,23 @@ public class Currency {
 
     public void setIconPath(String iconPath) {
         this.iconPath.set(iconPath);
+    }
+
+    public void waitData() throws InterruptedException {
+        if (waitDataSignal != null)
+            waitDataSignal.await();
+    }
+
+    public void onDataComplete() {
+        if (waitDataSignal != null)
+            waitDataSignal.countDown();
+    }
+
+    public void resetWaitData() {
+        if (waitDataSignal != null && waitDataSignal.getCount() == 1) {
+            waitDataSignal.countDown();
+        }
+        waitDataSignal = new CountDownLatch(1);
     }
 
     @Override
